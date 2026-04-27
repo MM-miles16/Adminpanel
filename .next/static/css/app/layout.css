@@ -10,7 +10,22 @@ body {
   background: #000000;
 }
 
-
+@media (max-width: 480px) {
+  .frame {
+    margin:0 !important;
+    background: none !important;
+    border-radius: 40px;
+    padding: 0px !important;
+    display: flex;
+  }
+  .panel {
+    flex: 1 1;
+    background: #e9e4d8;
+    border-radius: 30px;
+    padding: 20px 6px 10px !important;
+    margin-left: 0px !important;
+}
+} 
 
 @media (min-width: 1440px) {
   .frame {
@@ -432,9 +447,9 @@ button {
 }
 
 .title {
-  font-family: Georgia, serif;
+  font-family: poppins;
   font-size: 28px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 /* GRID */
@@ -601,7 +616,29 @@ button {
   word-break: break-word;
   font-size: 10px;
 }
+@media (max-width: 768px) {
+  .container {
+        margin-top: 20px !important;
+        padding: 12px;
+    }
+    .title {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+  .car-title {
+    font-family: poppins;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+.car-img {
+    width: 120px;
+    object-fit: contain;
+}
 
+
+}
 
    
 
@@ -1132,6 +1169,7 @@ button {
 .booking-title {
   font-size: 28px;
   font-weight: 600;
+  color: #2a2a2a;
   margin-bottom: 20px;
 }
 
@@ -1845,11 +1883,31 @@ button {
   }
 
   .container,
-  .booking-container,
   .maint2-container {
     margin-top: 60px;
     padding: 12px;
   }
+  .booking-container{
+    margin-top: 20px;
+    padding: 12px;
+  }
+  .booking-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.booking-search {
+    width: 300px;
+    display: flex;
+    align-items: center;
+    background: #f3efe7;
+    border-radius: 20px;
+    padding: 8px 12px;
+    margin-bottom: 15px;
+}
+
+
 
   h1 {
     font-size: 22px;
@@ -1870,7 +1928,7 @@ button {
     justify-content: space-between;
     align-items: center;
 
-    padding: 12px 16px;
+    padding: 12px 15px 12px 5px;
     background: #2f2f2f;
 
     position: fixed;
@@ -1882,6 +1940,7 @@ button {
 
   .mobile-logo {
     height: 28px;
+    width: 90px;
   }
 }
 
@@ -1932,7 +1991,7 @@ button {
     left: -100%;
 
     width: 100%;
-    height: 100vh;
+    height: 95%;
 
     background: linear-gradient(to bottom right, #2f2f2f, #5e5d5c);
 
@@ -1940,7 +1999,7 @@ button {
     z-index: 1001;
 
     padding: 30px 20px;
-
+    border-radius: 0px 12px 12px 0px!important;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -2027,6 +2086,10 @@ button {
     border-radius: 16px;
   }
 
+  .booking-row{
+    gap: 8px !important;
+  }
+
 }
 
 
@@ -2035,12 +2098,34 @@ button {
 ========================================= */
 @media (max-width: 768px) {
 
-  .booking-left,
+  
   .maint2-grid {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    
+    gap: 16px;
   }
+  .booking-left{
+    display: flex;
+    gap: 13px;
+  }
+
+  .maint2-row {
+    width: 90% !important;
+    max-width: 700px;
+    display: flex;
+    justify-content: space-between;
+    
+    background: #EAE5D9;
+    padding: 14px 18px 14px;
+    border-radius: 14px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+  .col {
+    font-size: 10px !important;
+    font-weight: 500;
+    color: #1a1a1a;
+  }
+
 
 }
 
@@ -2054,15 +2139,26 @@ button {
   .maint2-actions {
     width: 100%;
     display: flex;
-    gap: 10px;
+    gap: 7px;
   }
 
-  .btn,
   .maint2-btn {
     flex: 1 1;
     padding: 10px;
-    font-size: 11px;
+    font-size: 9px;
   }
+
+  .maint2-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-top: -25px;
+    margin-bottom: 10px;
+}
+  .btn {
+        flex: 1 1;
+        padding: 6px 4px;
+        font-size: 8px;
+    }
 
 }
 
@@ -2073,16 +2169,36 @@ button {
 @media (max-width: 768px) {
 
   .maint2-top-bar {
-    flex-direction: column;
+    flex-direction: row;
     gap: 10px;
   }
+  .maint2-top-bar {
+    display: flex;
+    align-items: none !important;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.maint2-gridp {
+    font-size: 10px;
+    font-weight: 500;
+    color: #1a1a1a;
+}
 
   .maint2-search {
-    width: 100%;
+    width: 260px;
+        display: flex;
+        align-items: left;
+        background: #f3efe7;
+        border-radius: 20px;
+        padding: 8px 12px;
+        margin-bottom: 15px;
+        margin-left: 0px;
   }
 
   .maint2-btn.add {
     width: 100%;
+    margin-top: -15px;
   }
 
 }

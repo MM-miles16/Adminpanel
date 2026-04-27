@@ -45,7 +45,7 @@ export default function Maintainance() {
           <span>🔍</span>
         </div>
 
-        <button className="maint2-btn add">ADD CARS</button>
+        <button className="maint2-btn add">ADD</button>
       </div>
 
       {/* LIST */}
