@@ -29,11 +29,10 @@
       "static/css/app/maintainance/page.css",
       "static/chunks/app/maintainance/page.js"
     ],
-    "/paused/page": [
+    "/_not-found/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/paused/page.css",
-      "static/chunks/app/paused/page.js"
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }
