@@ -2,13 +2,13 @@ export default function Home() {
   return (
     <div>
 
-      <h1 className="title">Welcome To Admin Dashboard</h1>
+      <h1 className="title" id="title-main">Welcome To Admin Dashboard</h1>
 
       {/* TOP SECTION */}
       <div className="top-grid">
 
-        <div className="card revenue">
-          <p className="gold">Total Revenue</p>
+        <div className="card revenue" >
+          <p className="gold" >Total Revenue</p>
           <h2>Rs. 2,50,000</h2>
           <span>Is the revenue in Last month</span>
 
@@ -33,14 +33,14 @@ export default function Home() {
           <button>Know More</button>
         </div>
 
-        <div className="card small green">
+        <div className="card small green" id="card3">
           <p className="smallp">in Use</p>
           <h3>12</h3>
           <span>Cars are currently in on road.</span>
           <button>Know More</button>
         </div>
 
-        <div className="card small green">
+        <div className="card small green" id="card3">
           <p className="smallp">Upcoming</p>
           <h3>22</h3>
           <span>cars pre-booked in this month.</span>
@@ -77,16 +77,16 @@ export default function Home() {
         </div>
 
         {/* ✅ ADD CARS (UPDATED) */}
-        <div className="add-card">
+        <div className="add-card" >
 
           <div className="add-left">
             <img src="/add-car.png" className="add-img" />
           </div>
 
-          <div className="add-right">
+          <div className="add-right" >
             <h3>ADD CARS</h3>
             <p>Add when you have all data about Car and Host</p>
-            <button>Click to Add</button>
+            <button><span id="add-car-mobile">Click to</span> Add</button>
           </div>
 
         </div>
