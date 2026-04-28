@@ -1,10 +1,9 @@
 {
   "pages": {
-    "/paused/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/paused/page.css",
-      "static/chunks/app/paused/page.js"
+      "static/chunks/app/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -12,11 +11,23 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
+    "/cars/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/cars/page.css",
+      "static/chunks/app/cars/page.js"
+    ],
     "/bookings/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/css/app/bookings/page.css",
       "static/chunks/app/bookings/page.js"
+    ],
+    "/paused/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/paused/page.css",
+      "static/chunks/app/paused/page.js"
     ],
     "/maintainance/page": [
       "static/chunks/webpack.js",
@@ -24,16 +35,10 @@
       "static/css/app/maintainance/page.css",
       "static/chunks/app/maintainance/page.js"
     ],
-    "/cars/page": [
+    "/_not-found/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/css/app/cars/page.css",
-      "static/chunks/app/cars/page.js"
-    ],
-    "/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }

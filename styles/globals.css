@@ -611,6 +611,7 @@ button {
   font-size: 10px;
 }
 @media (max-width: 768px) {
+  
   .container {
         margin-top: 20px !important;
         padding: 12px;
@@ -734,18 +735,66 @@ button {
   letter-spacing: 0px;
 }
 
+@media (max-width: 768px) {
+  .popup-box {
+    width: 320px !important;
+    padding: 5px 20px 15px;
+    border-radius: 16px;
+    background: linear-gradient(to bottom right, #2f2f2f, #5e5d5c);
+    border: 10px solid #c6a76e;
+    text-align: left;
+}
+
+.popup-title {
+  color: #a4a3a3;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 5px !important;
+}
+
+.form-popup {
+    max-width: 280px !important;
+    width: 100% !important;
+    padding: 15px 10px;
+    border-radius: 30px;
+    border: 10px solid #c6a76e;
+    background: linear-gradient(to bottom right, #2f2f2f, #5e5d5c);
+}
+
+.form-group input {
+  padding:7px 10px !important;
+  border-radius: 10px;
+  border: none;
+  background: #949494;
+  font-size: 12px !important;
+}
+
+.custom-datepicker {
+    width: 85% !important;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: none;
+    background: #e5e2dc;
+    color: #1a1a1a;
+    font-size: 12px;
+    font-family: poppins;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+}
+.form-row {
+  display: flex;
+  gap: 5px !important;
+  margin-bottom: 10px;
+}
+
+.form-header h3 {
+    color: #c6a76e;
+    font-size: 15px !important;
+}
 
 
-
-
-
-
-
-
-
-
-
-
+}
 
 
 
@@ -1131,7 +1180,44 @@ button {
   transform: scale(1.05);
 }
 
+@media (max-width: 768px){
+  .confirm-box {
+    width: 320px !important;
+    padding: 10px;
+    border-radius: 14px;
+    background: linear-gradient(145deg, #2c2c2c, #5e5d5c);
+    border: 10px solid #c6a76e;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(198, 167, 110, 0.2);
+    text-align: center;
+  }
+  .confirm-details div {
+    flex: 1 1;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px;
+    border-radius: 10px;
+}
 
+.confirm-box h3 {
+    color: #c6a76e;
+    font-size: 23px;
+    font-weight: bold;
+    margin-bottom: -5px !important;
+    letter-spacing: 1px;
+    margin-top: 8px !important;
+}
+.confirm-box button {
+    background: linear-gradient(to right, #b59567, #96764a);
+    color: black;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-bottom: 7px;
+}
+
+}
 
 
 
@@ -1446,6 +1532,76 @@ button {
   background: #c6a76e;
   color: black;
 }
+@media (max-width: 768px){
+  .date-view-popup {
+    max-width: 320px !important;
+    padding: 30px 20px;
+    border-radius: 26px;
+    background: linear-gradient(to bottom right, #2f2f2f, #5e5d5c);
+    border: 6px solid #c6a76e;
+}
+
+.custom-datepicker {
+    width: 92%;
+    padding: 7px 12px !important;
+    border-radius: 10px;
+    border: none;
+    background: #e5e2dc;
+    color: #1a1a1a;
+    font-size: 12px;
+    font-family: poppins;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.2s ease;
+}
+    .date-view-popup {
+        max-width: 320px !important;
+        padding: 15px 20px 30px !important;
+        border-radius: 26px;
+        background: linear-gradient(to bottom right, #2f2f2f, #5e5d5c);
+        border: 6px solid #c6a76e;
+    }
+
+    .popup-title {
+    color: #a5a5a5;
+    font-size: 16px;
+    font-family: poppins;
+    margin-bottom: 10px;
+    margin-top: 10px !important;
+}
+
+.date-row {
+    display: flex;
+    align-items: center;
+    gap: 10px !important;
+    margin-top: 12px;
+    margin-bottom: 17px;
+}
+.popup-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-right: 0px !important;
+}
+    .btn {
+        flex: 1 1;
+        padding: 10px 4px;
+        font-size: 10px !important;
+    }
+
+
+    .success-popup {
+  width: 290px !important;
+  padding: 30px;
+
+  text-align: center;
+
+  background: linear-gradient(to bottom right, #2f2f2f, #5e5d5c);
+  border: 4px solid #c6a76e;
+  border-radius: 20px;
+}
+
+}
 
 
 
@@ -1741,6 +1897,70 @@ button {
 }
 
 
+@media (max-width: 768px) {
+
+  .maint2-popup-content {
+    position: relative;
+    z-index: 2;
+    padding: 10px 15px 20px;
+    max-width: 320px !important;
+    width: 100%;
+}
+
+  .maint2-popup-box {
+        width: 88% !important;
+        border-radius: 20px;
+    }
+
+        .custom-datepicker {
+        width: 85% !important;
+      }
+
+  .maint2-popup-buttons button {
+        width: 60% !important;
+        max-width: 160px;
+        
+    }
+
+    .maint2-popup-buttons {
+    display: flex;
+    flex-direction: row !important;
+    justify-content: center !important;
+    gap: 10px;
+    
+}
+.maint2-popup-title {
+        color: #cfcfcf;
+        font-size: 15px !important;
+        font-weight: 600;
+        text-align: left;
+        margin-bottom: 15px !important;
+        margin-left: 10px;
+        margin-top: 7px;
+    }
+
+.maint2-popup-title {
+    color: #cfcfcf;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: left;
+    margin-bottom: 15px !important;
+    margin-left: 10px;
+    margin-top: 7px;
+}
+
+    .maint2-date-row {
+        flex-direction: row !important;
+        gap: 10px !important;
+    }
+    .maint2-btn {
+        flex: 1 1;
+        padding: 10px;
+        font-size: 10px !;
+    }
+
+}    
+
 
 
 
@@ -1868,6 +2088,7 @@ button {
    GLOBAL MOBILE BASE
 ========================================= */
 @media (max-width: 768px) {
+  
 
   body {
     overflow-x: hidden;
