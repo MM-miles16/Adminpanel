@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import toast from "react-hot-toast";
 
-export default function Maintainance() {
+export default function OfflineBooking() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [extendBooking, setExtendBooking] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -17,7 +17,7 @@ export default function Maintainance() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
 
-  // ADD MAINTAINANCE STATE
+  // ADD OFFLINE BOOKING STATE
   const [showAddPopup, setShowAddPopup] = useState(false);
   const [allCars, setAllCars] = useState([]);
   const [selectedVehicleId, setSelectedVehicleId] = useState("");
@@ -29,7 +29,7 @@ export default function Maintainance() {
     if (isManual) setIsRefreshing(true);
     try {
       const token = sessionStorage.getItem("admin_token");
-      const res = await fetch(`/api/hub/bookings?reason=MAINTENANCE&page=${targetPage}&limit=10&t=${Date.now()}`, {
+      const res = await fetch(`/api/hub/bookings?reason=OFFLINE BOOKING&page=${targetPage}&limit=10&t=${Date.now()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -58,7 +58,7 @@ export default function Maintainance() {
         setLogs(mappedLogs);
         setPage(targetPage);
         setHasMore(json.hasMore);
-        sessionStorage.setItem('ap_maintenance_bookings', JSON.stringify({
+        sessionStorage.setItem('ap_offline_bookings', JSON.stringify({
           data: mappedLogs,
           page: targetPage,
           hasMore: json.hasMore
@@ -66,7 +66,7 @@ export default function Maintainance() {
         if (isManual) toast.success("Logs updated");
       }
     } catch (error) {
-      console.error("Failed to fetch maintenance logs:", error);
+      console.error("Failed to fetch offline bookings:", error);
     } finally {
       setIsLoading(false);
       if (isManual) setIsRefreshing(false);
@@ -85,7 +85,7 @@ export default function Maintainance() {
     }
   };
 
-  const handleCreateMaintenance = async () => {
+  const handleCreateOfflineBooking = async () => {
     if (!selectedVehicleId) {
       toast.error("Please select a vehicle");
       return;
@@ -113,7 +113,7 @@ export default function Maintainance() {
         },
         body: JSON.stringify({
           vehicle_id: selectedVehicleId,
-          reason: "MAINTENANCE",
+          reason: "OFFLINE BOOKING",
           start_time: formatLocal(addFromDate),
           end_time: formatLocal(addToDate),
         }),
@@ -121,11 +121,11 @@ export default function Maintainance() {
 
       const data = await res.json();
       if (res.ok) {
-        toast.success("Maintenance log created!");
+        toast.success("Offline booking created!");
         setShowAddPopup(false);
         fetchLogs(true, 1);
       } else {
-        toast.error(data.error || "Failed to create log");
+        toast.error(data.error || "Failed to create booking");
       }
     } catch (err) {
       toast.error("Network error");
@@ -135,7 +135,7 @@ export default function Maintainance() {
   };
 
   useEffect(() => {
-    const cached = sessionStorage.getItem('ap_maintenance_bookings');
+    const cached = sessionStorage.getItem('ap_offline_bookings');
     if (cached) {
       try {
         const parsed = JSON.parse(cached);
@@ -156,7 +156,7 @@ export default function Maintainance() {
     if (!selectedCar) return;
     try {
       const token = sessionStorage.getItem("admin_token");
-      const res = await fetch(`/api/hub/bookings?id=${selectedCar.id}&reason=MAINTENANCE`, {
+      const res = await fetch(`/api/hub/bookings?id=${selectedCar.id}&reason=OFFLINE BOOKING`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -165,12 +165,12 @@ export default function Maintainance() {
         setSelectedCar(null);
         setShowSuccess(true);
         setTimeout(() => setShowSuccess(false), 2000);
-        toast.success("Log deleted successfully");
+        toast.success("Offline booking deleted successfully");
       } else {
-        toast.error("Failed to delete log");
+        toast.error("Failed to delete booking");
       }
     } catch (error) {
-      toast.error("Error deleting log");
+      toast.error("Error deleting booking");
     }
   };
 
@@ -182,7 +182,7 @@ export default function Maintainance() {
   return (
     <div className="maint2-container">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1 className="maint2-title" style={{ margin: 0 }}>Maintainance</h1>
+        <h1 className="maint2-title" style={{ margin: 0 }}>Offline Booking</h1>
         <button 
           onClick={() => fetchLogs(true, page)} 
           disabled={isRefreshing}
@@ -248,8 +248,8 @@ export default function Maintainance() {
         <div className="popup-overlay" onClick={() => setShowAddPopup(false)}>
           <div className="form-popup" onClick={(e) => e.stopPropagation()}>
             <div className="form-header">
-              <img src="/maintain.png" className="form-icon" />
-              <h3>MAINTENANCE</h3>
+              <img src="/pause.png" className="form-icon" />
+              <h3>OFFLINE BOOKING</h3>
             </div>
             <div className="form-group full">
               <label>SELECT VEHICLE</label>
@@ -295,8 +295,8 @@ export default function Maintainance() {
             <div className="form-group full">
               <label>REASON</label>
               <div style={{ 
-                background: '#fff3cd', 
-                color: '#856404', 
+                background: '#d4edda', 
+                color: '#155724', 
                 padding: '10px', 
                 borderRadius: '8px', 
                 fontSize: '12px', 
@@ -304,16 +304,16 @@ export default function Maintainance() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                border: '1px solid #ffeeba'
+                border: '1px solid #c3e6cb'
               }}>
-                ⚙️ MAINTENANCE
+                📅 OFFLINE BOOKING
               </div>
             </div>
             <div className="form-actions">
               <button className="cancel" onClick={() => setShowAddPopup(false)}>Cancel</button>
               <button 
                 className="submit" 
-                onClick={handleCreateMaintenance}
+                onClick={handleCreateOfflineBooking}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Submitting..." : "Submit"}
@@ -328,7 +328,7 @@ export default function Maintainance() {
         {isLoading ? (
           <p style={{ padding: "20px" }}>Loading logs...</p>
         ) : logs.length === 0 ? (
-          <p style={{ padding: "20px" }}>No maintenance logs found.</p>
+          <p style={{ padding: "20px" }}>No offline bookings found.</p>
         ) : (
           <>
             {logs.map((item, index) => (
@@ -409,13 +409,13 @@ export default function Maintainance() {
                 <div className="maint2-date-field">
                   <label>FROM</label>
                   <div className="custom-datepicker-display">
-                    {formatDisplayDate(fromDate)}
+                    {fromDate ? fromDate.toLocaleString() : 'N/A'}
                   </div>
                 </div>
                 <div className="maint2-date-field">
                   <label>TO</label>
                   <div className="custom-datepicker-display">
-                    {formatDisplayDate(toDate)}
+                    {toDate ? toDate.toLocaleString() : 'N/A'}
                   </div>
                 </div>
               </div>
@@ -462,48 +462,48 @@ export default function Maintainance() {
                 </div>
               </div>
               <div className="maint2-popup-buttons">
-                 <button
-                   className="btn extend-btn"
-                   disabled={isRefreshing}
-                   onClick={async () => {
-                     if (!toDate || toDate <= new Date(extendBooking.end_time.replace(/[Z+].*$/, ''))) {
-                       toast.error("Please select a future end time");
-                       return;
-                     }
+                <button
+                  className="btn extend-btn"
+                  disabled={isRefreshing}
+                  onClick={async () => {
+                    if (!toDate || toDate <= new Date(extendBooking.end_time.replace(/[Z+].*$/, ''))) {
+                      toast.error("Please select a future end time");
+                      return;
+                    }
 
-                     setIsRefreshing(true);
-                     try {
-                       const token = sessionStorage.getItem("admin_token");
-                       const res = await fetch("/api/hub/bookings/extend", {
-                         method: "POST",
-                         headers: {
-                           "Content-Type": "application/json",
-                           Authorization: `Bearer ${token}`,
-                         },
-                         body: JSON.stringify({
-                           bookingId: extendBooking.id,
-                           newEndTime: formatLocal(toDate),
-                           type: 'offline'
-                         }),
-                       });
+                    setIsRefreshing(true);
+                    try {
+                      const token = sessionStorage.getItem("admin_token");
+                      const res = await fetch("/api/hub/bookings/extend", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({
+                          bookingId: extendBooking.id,
+                          newEndTime: formatLocal(toDate),
+                          type: 'offline'
+                        }),
+                      });
 
-                       const data = await res.json();
-                       if (res.ok) {
-                         toast.success("Maintenance extended successfully!");
-                         setExtendBooking(null);
-                         fetchLogs(true, page);
-                       } else {
-                         toast.error(data.error || "Failed to extend maintenance");
-                       }
-                     } catch (err) {
-                       toast.error("Network error");
-                     } finally {
-                       setIsRefreshing(false);
-                     }
-                   }}
-                 >
-                   {isRefreshing ? "Extending..." : "Extend"}
-                 </button>
+                      const data = await res.json();
+                      if (res.ok) {
+                        toast.success("Booking extended successfully!");
+                        setExtendBooking(null);
+                        fetchLogs(true, page);
+                      } else {
+                        toast.error(data.error || "Failed to extend booking");
+                      }
+                    } catch (err) {
+                      toast.error("Network error");
+                    } finally {
+                      setIsRefreshing(false);
+                    }
+                  }}
+                >
+                  {isRefreshing ? "Extending..." : "Extend"}
+                </button>
                 <button className="maint2-btn cancel" onClick={() => setExtendBooking(null)}>Cancel</button>
               </div>
             </div>
@@ -548,23 +548,5 @@ export default function Maintainance() {
         }
       `}</style>
     </div>
-  );
-
-  function formatLocal(date) {
-    if (!date) return '';
-    const pad = (n) => n.toString().padStart(2, '0');
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-  }
-
-  function formatDisplayDate(date) {
-    if (!date) return 'N/A';
-    const pad = (n) => n.toString().padStart(2, '0');
-    const day = pad(date.getDate());
-    const month = pad(date.getMonth() + 1);
-    const year = date.getFullYear();
-    const hours = pad(date.getHours());
-    const minutes = pad(date.getMinutes());
-    const seconds = pad(date.getSeconds());
-    return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-  }
+  )
 }

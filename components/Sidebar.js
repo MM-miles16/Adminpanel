@@ -7,6 +7,11 @@ export default function Sidebar() {
   const path = usePathname()
   const [open, setOpen] = useState(false)
 
+  const handleLogout = () => {
+    sessionStorage.clear()
+    window.location.reload()
+  }
+
   return (
     <>
       {/* 🔥 MOBILE TOP BAR (ONLY LOGO + HAMBURGER) */}
@@ -43,12 +48,12 @@ export default function Sidebar() {
 
             <Link href="/maintainance" className={`item ${path==='/maintainance'?'active':''}`} onClick={()=>setOpen(false)}>Maintainace</Link>
 
-            <Link href="/paused" className={`item ${path==='/paused'?'active':''}`} onClick={()=>setOpen(false)}>Paused Cars</Link>
+            <Link href="/offline-booking" className={`item ${path==='/offline-booking'?'active':''}`} onClick={()=>setOpen(false)}>Offline Booking</Link>
 
           </div>
         </div>
 
-        <button className="logout">Logout</button>
+        <button className="logout" onClick={handleLogout}>Logout</button>
 
       </div>
 
