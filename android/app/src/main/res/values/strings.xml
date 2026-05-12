@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MM Miles Admin</string>
+    <string name="title_activity_main">MM Miles Admin</string>
+    <string name="package_name">com.mmmiles.admin</string>
+    <string name="custom_url_scheme">com.mmmiles.admin</string>
+</resources>
