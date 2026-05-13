@@ -178,7 +178,7 @@ body {
   max-height: 160px;
   height: 100%;
   display: flex;
-  margin-top: -5px;
+  margin-top: 0px;
   flex-direction: column;
   justify-content: space-between;
 }
