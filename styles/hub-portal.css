@@ -204,6 +204,7 @@
   font-size: 0.78rem;
   font-weight: 600;
   color: #BF9860;
+  margin-top: -30px;
 }
 
 .logout-btn {
@@ -834,11 +835,15 @@
   .portal-main-content {
     padding: 1rem;
   }
+  
 }
 
 @media (max-width: 640px) {
   .portal-login-card {
     padding: 2rem 1.5rem;
+  }
+  .portal-admin-tag{
+    display: none !important;
   }
   .portal-header {
     padding: 0.8rem 1rem;

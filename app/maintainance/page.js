@@ -347,7 +347,7 @@ export default function Maintainance() {
                       setToDate(new Date(item.end_time.replace(/[Z+].*$/, '')));
                     }}
                   >
-                    View Date
+                    View
                   </button>
 
                   {item.status !== "completed" && (
@@ -371,7 +371,7 @@ export default function Maintainance() {
                       : "Upcoming"}
                   </button>
 
-                  <button className="maint2-btn">Contact Host</button>
+                  <button className="maint2-btn">Call Host</button>
                 </div>
               </div>
             ))}

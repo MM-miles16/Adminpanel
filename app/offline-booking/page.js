@@ -182,7 +182,7 @@ export default function OfflineBooking() {
   return (
     <div className="maint2-container">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1 className="maint2-title" style={{ margin: 0 }}>Offline Booking</h1>
+        <h1 className="maint2-title" style={{ margin: 0 }}>Offline</h1>
         <button 
           onClick={() => fetchLogs(true, page)} 
           disabled={isRefreshing}
@@ -371,13 +371,13 @@ export default function OfflineBooking() {
                       : "Upcoming"}
                   </button>
 
-                  <button className="maint2-btn">Contact Host</button>
+                  <button className="maint2-btn">Call Host</button>
                 </div>
               </div>
             ))}
 
             {(page > 1 || hasMore) && (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '20px', padding: '15px 0' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '0px', padding: '15px 0' }}>
                 <button 
                   onClick={() => handlePageChange(page - 1)}
                   disabled={page === 1 || isRefreshing}

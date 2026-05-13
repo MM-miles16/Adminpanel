@@ -169,7 +169,7 @@ export default function Bookings() {
                   <span className="col name">{b.name}</span>
                   <span className="col phone">{b.phone}</span>
                   <span className="col duration">{b.duration}</span>
-                  <span className="col car">{b.car}</span>
+                  <span className="col car" id="booking-mobile-remove">{b.car}</span>
                   <span className="col price">{b.price}</span>
                 </div>
 
@@ -183,7 +183,7 @@ export default function Bookings() {
                       setToDate(new Date(b.end_time.replace(/[Z+].*$/, '')));
                     }}
                   >
-                    View Date
+                    View
                   </button>
 
                   {b.status !== "completed" && (
@@ -207,13 +207,13 @@ export default function Bookings() {
                       : "Upcoming"}
                   </button>
 
-                  <button className="btn contact">Contact Host</button>
+                  <button className="btn contact">Call Host</button>
                 </div>
               </div>
             ))}
 
             {(page > 1 || hasMore) && (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '20px', padding: '15px 0' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '0px', padding: '15px 0' }}>
                 <button 
                   onClick={() => handlePageChange(page - 1)}
                   disabled={page === 1 || isRefreshing}

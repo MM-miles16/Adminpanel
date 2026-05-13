@@ -15,6 +15,17 @@ body {
     padding: 0px !important;
     display: flex;
   }
+  .mobile-admin-word-remove{
+    display: none;
+  }
+  
+  #refresh-button-mobile-ui{
+    padding: 0px 15px 0px 20px;
+    margin-top: 60px !important;
+    margin-bottom: 6px !important;
+    
+    
+  }
   .panel {
     flex: 1 1;
     background: #e9e4d8;
@@ -24,6 +35,7 @@ body {
 }
 } 
 
+
 @media (min-width: 1440px) {
   .frame {
     margin:80px 15px 20px !important;
@@ -32,7 +44,11 @@ body {
     padding: 10px;
     display: flex;
   }
-
+  
+  .portal-admin-tag{
+    margin-top: -4px !important;
+    
+  }
   /* =========================
     RIGHT PANEL (CREAM AREA)
   ========================= */
@@ -52,7 +68,7 @@ body {
 }
 
 .logo-img{
-  width: 130px;
+  width: 150px;
   margin-left: 14px;
 }
 /* =========================
@@ -65,6 +81,7 @@ body {
   padding: 10px;
   display: flex;
 }
+
 
 /* =========================
    RIGHT PANEL (CREAM AREA)
@@ -140,6 +157,8 @@ body {
   font-weight: 600;
   margin-bottom: 20px;
 }
+
+
 
 /* =========================
    TOP GRID
@@ -591,6 +610,7 @@ button {
   background-color: #e9e4d8;
 }
 
+
 .title {
   font-family: poppins;
   font-size: 28px;
@@ -763,7 +783,7 @@ button {
 @media (max-width: 768px) {
   
   .container {
-        margin-top: 20px !important;
+        margin-top: 50px !important;
         padding: 12px;
     }
     .title {
@@ -1456,7 +1476,14 @@ button {
     inset 0 1px 0 rgba(255,255,255,0.4);
 }
 
-
+@media (max-width: 480px){
+   #booking-mobile-remove{
+  display: none !important;
+}
+.booking-container {
+  margin-top: 50px !important;
+}
+}
 
 @media (min-width: 1440px){
   .booking-left {
@@ -2246,7 +2273,7 @@ button {
 
   .container,
   .maint2-container {
-    margin-top: 60px;
+    margin-top: 50px;
     padding: 12px;
   }
   .booking-container{
@@ -2301,8 +2328,8 @@ button {
   }
 
   .mobile-logo {
-    height: 28px;
-    width: 90px;
+    height: 30px;
+    width: 98px;
   }
 }
 
@@ -2468,7 +2495,7 @@ button {
   }
   .booking-left{
     display: flex;
-    gap: 13px;
+    gap: 17px;
   }
 
   .maint2-row {
