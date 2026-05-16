@@ -286,7 +286,7 @@ body {
 }
 
 .split-bottom h2 {
-  color: #ffb01e;
+  color: #98742f;
   font-size: 26px;
   margin: -5px 0 3px;
 }
@@ -362,7 +362,7 @@ body {
 
 /* BUTTON */
 .add-right button {
-  background: #c6a76e;
+  background: linear-gradient(90deg, #d8b480 0, #bf9860);
   color: black;
   border-radius: 18px;
   padding: 6px 16px;
@@ -518,7 +518,7 @@ button {
   .add-right h3 {
     color: #c6a76e;
     font-size: 13px !important;
-    margin-top: 15px;
+    margin-top: 5px;
     margin-bottom: 10px;
 }
 .split-bottom h2 {
@@ -550,9 +550,23 @@ button {
   
 }
     .add-img {
-    width: 70px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     transform: rotate(-12deg);
+}
+.add-card {
+
+  max-height: 139px; /* increased for better match */
+  height: 100%;
+  padding: 5px 20px 5px 10px!important;
+}
+
+.add-right button {
+    background: #c6a76e;
+    color: black;
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-size: 10px;
 }
 
   /* Revenue takes full width */
@@ -593,6 +607,11 @@ button {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
+
+  #mobile-number-Maintenance {
+  display: none;
+}
+
 
 }
 
@@ -685,6 +704,7 @@ button {
     flex-direction: column;
   }
 
+  
 
 }
 
@@ -777,6 +797,7 @@ button {
 .details-col.right {
   width: 65%;
 }
+
 
 /* TEXT */
 
@@ -952,7 +973,24 @@ button {
   background: #949494;
   font-size: 12px !important;
 }
+#date-font-mobile{
+    
+    color: #333;
+    font-size: 12px;
+    font-weight: 500;
+    
+}
 
+#date-font-mobile1{
+    
+    color: #333;
+    font-size: 11px;
+    font-weight: 500;
+    
+}
+.maint2-popup-content{
+  margin-left: -10px;
+}
 .custom-datepicker {
     width: 85% !important;
     padding: 10px 12px;
@@ -1941,6 +1979,7 @@ button {
 .maint2-btn.cancel {
   background: #7c7070;
   color: black;
+  padding-left: -10px !important ;
 }
 
 /* =========================
@@ -2628,7 +2667,13 @@ button {
 
   .maint2-popup-buttons {
     flex-direction: column;
-    width: 100%;
+    width: 90%;
+    margin-left: 15px;
+  }
+  #maint2-popup-buttons-mobile{
+    flex-direction: column;
+    width: 90% !important;
+    margin-left: 15px !important;
   }
 
   .maint2-popup-buttons button {

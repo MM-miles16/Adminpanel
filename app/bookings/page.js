@@ -243,13 +243,13 @@ export default function Bookings() {
             <div className="date-row">
               <div className="date-field">
                 <label>FROM</label>
-                <div className="custom-datepicker-display">
+                <div className="custom-datepicker-display" id="date-font-mobile">
                   {fromDate ? fromDate.toLocaleString() : 'N/A'}
                 </div>
               </div>
               <div className="date-field">
                 <label>TO</label>
-                <div className="custom-datepicker-display">
+                <div className="custom-datepicker-display" id="date-font-mobile">
                   {toDate ? toDate.toLocaleString() : 'N/A'}
                 </div>
               </div>

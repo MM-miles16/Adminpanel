@@ -206,6 +206,7 @@ export default function Home() {
 
             <div className="tabs">
               <span 
+                id="mobile-number-Maintenance"
                 className={bookingsTab === "This Week" ? "active" : ""}
                 onClick={() => setBookingsTab("This Week")}
                 style={{ cursor: "pointer" }}
@@ -224,7 +225,7 @@ export default function Home() {
           <div className="split-top">CARS UNDER MAINTENANCE</div>
           <div className="split-bottom">
             <h2>{isLoading ? '...' : occupancyStats.cars_in_maintenance_now}</h2>
-            <p>Cars in Maintenance</p>
+            <p>Cars <span id="mobile-number-Maintenance">in Maintenance</span></p>
             <button onClick={() => onNavigate('maintainance')}>Know More</button>
           </div>
         </div>
@@ -237,14 +238,14 @@ export default function Home() {
           <div className="add-right">
             <h3>ADD CARS</h3>
             <p>Add when you have all data about Car and Host</p>
-            <button>Click to Add</button>
+            <button>Add now</button>
           </div>
         </div>
 
         {/* HOST REQUEST */}
         <div className="host-card">
-          <h3>HOST REQUEST</h3>
-          <p>Know more about Host Requests</p>
+          <h3>Hosh Request</h3>
+          <p>Know more<span id="mobile-number-Maintenance"> about Host</span>  Requests</p>
           <button>Click to View</button>
         </div>
 

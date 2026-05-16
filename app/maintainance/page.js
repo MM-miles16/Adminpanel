@@ -408,13 +408,13 @@ export default function Maintainance() {
               <div className="maint2-date-row">
                 <div className="maint2-date-field">
                   <label>FROM</label>
-                  <div className="custom-datepicker-display">
+                  <div className="custom-datepicker-display" id="date-font-mobile1">
                     {formatDisplayDate(fromDate)}
                   </div>
                 </div>
                 <div className="maint2-date-field">
                   <label>TO</label>
-                  <div className="custom-datepicker-display">
+                  <div className="custom-datepicker-display" id="date-font-mobile1">
                     {formatDisplayDate(toDate)}
                   </div>
                 </div>

@@ -408,18 +408,18 @@ export default function OfflineBooking() {
               <div className="maint2-date-row">
                 <div className="maint2-date-field">
                   <label>FROM</label>
-                  <div className="custom-datepicker-display">
+                  <div className="custom-datepicker-display" id="date-font-mobile1">
                     {fromDate ? fromDate.toLocaleString() : 'N/A'}
                   </div>
                 </div>
                 <div className="maint2-date-field">
                   <label>TO</label>
-                  <div className="custom-datepicker-display">
+                  <div className="custom-datepicker-display" id="date-font-mobile1">
                     {toDate ? toDate.toLocaleString() : 'N/A'}
                   </div>
                 </div>
               </div>
-              <div className="maint2-popup-buttons">
+              <div className="maint2-popup-buttons" id="maint2-popup-buttons-mobile">
                 <button className="maint2-btn danger" onClick={handleDelete}>Delete Log</button>
                 <button className="maint2-btn cancel" onClick={() => setSelectedCar(null)}>Cancel</button>
               </div>
