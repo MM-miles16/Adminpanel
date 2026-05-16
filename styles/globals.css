@@ -468,8 +468,8 @@ button {
   .top-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 35px 12px ;
-    padding: 15px;
+    
+    padding:5px 15px 15px;
   }
   .bottom-grid {
         display: grid;
@@ -560,11 +560,25 @@ button {
     grid-column: 1 / -1;
     
   }
+  .revenue {
+        margin-bottom: 32px !important;
+        height: 85%;
+    }
 
   /* Small cards auto fit in 3 columns */
   .top-grid .small {
     width: 83%;
   }
+  .small {
+    max-height: 158px !important;
+    height: 100% ;
+    display: flex;
+    padding: 4px 15px 10px;
+    flex-direction: column;
+  }
+   .smallp{
+    margin-bottom: 12px !important;
+   }
   #card3{
     margin-top: -15px;
   }
@@ -660,7 +674,7 @@ button {
   .divider {
     height: 1px;
     background: #bfb7a8;
-    margin: -15px 0 -2px !important;
+    margin: 15px 0 -2px !important;
   }
   .car-card {
     background: #e1dacc;
