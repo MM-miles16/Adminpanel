@@ -1139,10 +1139,24 @@ button {
 
 
 
+@media (max-width: 482px){
 
+.react-datepicker {
+  background: linear-gradient(145deg, #2c2c2c, #565554);
+  border: 2px solid #c6a76e;
+  border-radius: 18px;
 
+  box-shadow:
+    0 15px 40px rgba(0,0,0,0.6),
+    inset 0 0 10px rgba(198,167,110,0.2);
 
+  padding: 10px;
+  font-family: poppins;
 
+  transform: scale(0.72) !important; /* 🔥 reduce size */
+  top: 40px;
+}
+}
 
 /* =========================
    COMPACT DATEPICKER INPUT
