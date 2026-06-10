@@ -3,12 +3,14 @@ import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import toast from "react-hot-toast";
+import { useRole } from "../lib/RoleContext";
 
 export default function Cars() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [actionType, setActionType] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showStatusConfirm, setShowStatusConfirm] = useState(false);
+  const { isAdmin } = useRole();
 
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
@@ -68,9 +70,13 @@ export default function Cars() {
 
     setIsSubmitting(true);
     try {
+      const token = sessionStorage.getItem("admin_token");
       const res = await fetch("/api/hub/cars", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           vehicleId: selectedCar.id,
           available_status: newStatus
@@ -337,6 +343,7 @@ export default function Cars() {
                     <span className={`status ${car.status}`}>
                       {car.status}
                     </span>
+                    {isAdmin && (
                     <span
                       className="menu-dot"
                       onClick={() => {
@@ -347,6 +354,7 @@ export default function Cars() {
                     >
                       ⋮
                     </span>
+                    )}
                   </div>
                 </div>
               </div>

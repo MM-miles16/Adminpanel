@@ -38,6 +38,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    // RBAC: Operators can only extend offline/maintenance bookings, not online bookings
+    if (admin.admin_role === 'operator' && type === 'online') {
+      return NextResponse.json({ error: "Operators cannot extend online bookings" }, { status: 403 });
+    }
+
     const isoNewEnd = toFaceValueISO(newEndTime);
     const table = type === 'online' ? 'bookings' : 'maintenance_logs';
     

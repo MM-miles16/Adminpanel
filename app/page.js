@@ -1,9 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useRole } from "../lib/RoleContext";
 
 export default function Home() {
   const router = useRouter();
+  const { isAdmin } = useRole();
   const [revenueStats, setRevenueStats] = useState({
     last_day_revenue: 0,
     last_week_revenue: 0,
@@ -231,6 +233,7 @@ export default function Home() {
         </div>
 
         {/* ✅ ADD CARS */}
+        {isAdmin && (
         <div className="add-card">
           <div className="add-left">
             <img src="/add-car.png" className="add-img" />
@@ -241,13 +244,16 @@ export default function Home() {
             <button>Add now</button>
           </div>
         </div>
+        )}
 
         {/* HOST REQUEST */}
+        {isAdmin && (
         <div className="host-card">
           <h3>Hosh Request</h3>
           <p>Know more<span id="mobile-number-Maintenance"> about Host</span>  Requests</p>
           <button>Click to View</button>
         </div>
+        )}
 
       </div>
     </div>

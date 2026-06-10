@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { verifyToken } from '../../../../lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,6 +55,19 @@ export async function GET(request) {
 
 export async function PATCH(request) {
   try {
+    // RBAC: Only admins can block/unblock cars
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+    const user = verifyToken(token);
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (user.admin_role === 'operator') {
+      return NextResponse.json({ error: 'Operators cannot modify car status' }, { status: 403 });
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const supabase = createClient(supabaseUrl, supabaseKey);
