@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ShieldCheck, User } from "lucide-react";
 import toast from "react-hot-toast";
+import { RoleProvider } from "../lib/RoleContext";
 
 export default function AuthWrapper({ children }) {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -177,15 +178,29 @@ export default function AuthWrapper({ children }) {
   }
 
   return (
-    <>
+    <RoleProvider>
       <header className="portal-header" style={{ background: 'transparent', boxShadow: 'none', padding: '0 0 20px 0', position: 'absolute', top: '35px', right: '40px', zIndex: 10 }}>
         <div className="portal-header-left">
           <span className="portal-admin-tag">
             <User size={12} /> {adminData?.name || "Hub Admin"}
+            <span style={{
+              marginLeft: '6px',
+              fontSize: '9px',
+              fontWeight: 700,
+              padding: '2px 8px',
+              borderRadius: '10px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              background: adminData?.role === 'operator' ? '#e8f4fd' : '#fef3e2',
+              color: adminData?.role === 'operator' ? '#1976d2' : '#c6a76e',
+              border: adminData?.role === 'operator' ? '1px solid #bbdefb' : '1px solid #f5deb3',
+            }}>
+              {adminData?.role === 'operator' ? 'Operator' : 'Admin'}
+            </span>
           </span>
         </div>
       </header>
       {children}
-    </>
+    </RoleProvider>
   );
 }

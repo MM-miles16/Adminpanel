@@ -56,7 +56,7 @@ export async function POST(req: Request) {
     // 2. Re-verify admin status
     const { data: admin, error: adminErr } = await supabase
       .from("admin_users")
-      .select("id, name, user_id")
+      .select("id, name, user_id, role")
       .eq("phone", phone)
       .eq("is_active", true)
       .single();
@@ -77,6 +77,7 @@ export async function POST(req: Request) {
       {
         aud: "authenticated",
         role: "hub_admin",
+        admin_role: admin.role || "admin",
         sub: admin.user_id || admin.id,
         name: admin.name,
         phone: phone,
@@ -92,6 +93,7 @@ export async function POST(req: Request) {
       admin: {
         id: admin.id,
         name: admin.name,
+        role: admin.role || "admin",
         phone: phone
       }
     });

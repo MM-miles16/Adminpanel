@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import toast from "react-hot-toast";
+import { useRole } from "../lib/RoleContext";
 
 export default function Bookings() {
   const [viewBooking, setViewBooking] = useState(null);
   const [extendBooking, setExtendBooking] = useState(null);
   const [successPopup, setSuccessPopup] = useState(false);
+  const { isAdmin } = useRole();
 
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
@@ -186,7 +188,7 @@ export default function Bookings() {
                     View
                   </button>
 
-                  {b.status !== "completed" && (
+                  {isAdmin && b.status !== "completed" && (
                     <button
                       className="btn extend"
                       onClick={() => {
