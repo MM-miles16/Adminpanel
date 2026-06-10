@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import toast from "react-hot-toast";
-import { useRole } from "../lib/RoleContext";
+import { useRole } from "../../lib/RoleContext";
 
 export default function Bookings() {
   const [viewBooking, setViewBooking] = useState(null);

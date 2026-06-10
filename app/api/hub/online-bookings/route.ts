@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getUserFromAuthHeader } from "@/lib/auth";
 
+export const dynamic = 'force-dynamic';
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_KEY!
@@ -53,7 +55,9 @@ export async function GET(req: Request) {
     }
 
     // Get unique user_ids and fetch their customer records
-    const userIds = [...new Set(bookings.map((b: any) => b.user_id).filter(Boolean))];
+    const userIds = bookings
+      .map((b: any) => b.user_id)
+      .filter((id, index, self) => id && self.indexOf(id) === index);
 
     let customerMap: Record<string, any> = {};
 
