@@ -3,8 +3,10 @@ import { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import toast from "react-hot-toast";
+import { useRole } from "../../lib/RoleContext";
 
 export default function Maintainance() {
+  const { isHost } = useRole();
   const [selectedCar, setSelectedCar] = useState(null);
   const [extendBooking, setExtendBooking] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -75,7 +77,10 @@ export default function Maintainance() {
 
   const fetchAllCars = async () => {
     try {
-      const res = await fetch('/api/hub/cars');
+      const token = sessionStorage.getItem("admin_token");
+      const res = await fetch('/api/hub/cars', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (res.ok) {
         const json = await res.json();
         if (json.success) setAllCars(json.data || []);
@@ -371,7 +376,9 @@ export default function Maintainance() {
                       : "Upcoming"}
                   </button>
 
-                  <button className="maint2-btn">Call Host</button>
+                  {!isHost && (
+                    <button className="maint2-btn">Call Host</button>
+                  )}
                 </div>
               </div>
             ))}

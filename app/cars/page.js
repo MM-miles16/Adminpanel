@@ -10,7 +10,7 @@ export default function Cars() {
   const [actionType, setActionType] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showStatusConfirm, setShowStatusConfirm] = useState(false);
-  const { isAdmin } = useRole();
+  const { isAdmin, isHost } = useRole();
 
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
@@ -101,7 +101,12 @@ export default function Cars() {
   const fetchCars = async (isManual = false) => {
     if (isManual) setIsRefreshing(true);
     try {
-      const res = await fetch(`/api/hub/cars?t=${Date.now()}`);
+      const token = sessionStorage.getItem("admin_token");
+      const res = await fetch(`/api/hub/cars?t=${Date.now()}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       if (res.ok) {
         const json = await res.json();
         if (json.success && json.data) {
@@ -343,7 +348,7 @@ export default function Cars() {
                     <span className={`status ${car.status}`}>
                       {car.status}
                     </span>
-                    {isAdmin && (
+                    {(isAdmin || isHost) && (
                     <span
                       className="menu-dot"
                       onClick={() => {
@@ -399,10 +404,12 @@ export default function Cars() {
                 <img src="/maintain.png" />
                 <span>MAINTENANCE</span>
               </div>
+              {!isHost && (
               <div className="popup-item" onClick={() => setActionType("offline-booking")}>
                 <img src="/pause.png" />
                 <span>OFFLINE BOOKING</span>
               </div>
+              )}
             </div>
           </div>
         </div>

@@ -28,7 +28,10 @@ export default function Home() {
   const fetchStats = async (isManual = false) => {
     if (isManual) setIsRefreshing(true);
     try {
-      const res = await fetch('/api/hub/dashboard/stats');
+      const token = sessionStorage.getItem("admin_token");
+      const res = await fetch('/api/hub/dashboard/stats', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (res.ok) {
         const json = await res.json();
         if (json.success) {

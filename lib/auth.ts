@@ -12,16 +12,13 @@ export function verifyToken(token: string | null): any {
   }
 
   try {
-    // Get the Supabase JWT secret from environment variables
     const jwtSecret = process.env.SUPABASE_JWT_SECRET;
     
     if (!jwtSecret) {
-      // CRITICAL SECURITY: Never bypass authentication
       console.error('CRITICAL: SUPABASE_JWT_SECRET environment variable is not set. Authentication disabled.');
       return null;
     }
 
-    // Verify and decode the token with signature validation
     const decoded = jwt.verify(token, jwtSecret);
     return decoded;
   } catch (error: any) {
@@ -31,9 +28,42 @@ export function verifyToken(token: string | null): any {
 }
 
 /**
- * Extract and verify user from Authorization header
- * @param authHeader - The Authorization header value
+ * Extract and verify user from standard Request object (supporting cookies and authorization header)
+ * @param request - Next.js Request or IncomingMessage
  * @returns Decoded user object if valid, null otherwise
+ */
+export function getUserFromRequest(request: any): any {
+  if (!request) return null;
+
+  let token = null;
+
+  // 1. Try to read token from Next.js request.cookies helper
+  if (request.cookies && typeof request.cookies.get === "function") {
+    token = request.cookies.get("admin_token")?.value;
+  }
+
+  // 2. Fallback: Parse from standard raw Cookie header string
+  if (!token) {
+    const cookieHeader = request.headers?.get?.("cookie") || request.headers?.cookie || "";
+    const match = cookieHeader.match(/admin_token=([^;]+)/);
+    if (match) {
+      token = match[1];
+    }
+  }
+
+  // 3. Fallback: Read from Authorization header
+  if (!token) {
+    const authHeader = request.headers?.get?.("authorization") || request.headers?.authorization || "";
+    if (authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    }
+  }
+
+  return verifyToken(token);
+}
+
+/**
+ * Legacy support for extracting user from authorization header string
  */
 export function getUserFromAuthHeader(authHeader: string | null): any {
   if (!authHeader?.startsWith('Bearer ')) {
@@ -45,17 +75,12 @@ export function getUserFromAuthHeader(authHeader: string | null): any {
 }
 
 /**
- * Middleware function to verify authentication
- * @param request - Next.js request object
- * @returns User object if authenticated, null otherwise
+ * Middleware function to verify authentication (now checking request cookies)
  */
 export function requireAuth(request: any): any {
-  const authHeader = request.headers.get('authorization');
-  const user = getUserFromAuthHeader(authHeader);
-  
+  const user = getUserFromRequest(request);
   if (!user) {
     return null;
   }
-  
   return user;
 }

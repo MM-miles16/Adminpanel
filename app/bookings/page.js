@@ -9,7 +9,7 @@ export default function Bookings() {
   const [viewBooking, setViewBooking] = useState(null);
   const [extendBooking, setExtendBooking] = useState(null);
   const [successPopup, setSuccessPopup] = useState(false);
-  const { isAdmin } = useRole();
+  const { isAdmin, isHost } = useRole();
 
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
@@ -23,7 +23,10 @@ export default function Bookings() {
   const fetchBookings = async (isManual = false, targetPage = 1) => {
     if (isManual) setIsRefreshing(true);
     try {
-      const res = await fetch(`/api/hub/bookings/list?page=${targetPage}&limit=10&t=${Date.now()}`);
+      const token = sessionStorage.getItem("admin_token");
+      const res = await fetch(`/api/hub/bookings/list?page=${targetPage}&limit=10&t=${Date.now()}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (res.ok) {
         const json = await res.json();
         if (json.success && json.data) {
@@ -209,7 +212,9 @@ export default function Bookings() {
                       : "Upcoming"}
                   </button>
 
-                  <button className="btn contact">Call Host</button>
+                  {!isHost && (
+                    <button className="btn contact">Call Host</button>
+                  )}
                 </div>
               </div>
             ))}

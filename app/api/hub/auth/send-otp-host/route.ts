@@ -1,8 +1,8 @@
-// app/api/hub/auth/send-otp/route.ts
+// app/api/hub/auth/send-otp-host/route.ts
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
-import { sendWhatsAppOTP } from "../../../auth/utils/whatsapp";
+import { sendWhatsAppOTP } from "@/app/api/auth/utils/whatsapp";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,25 +25,33 @@ export async function POST(req: Request) {
     const { phone } = await req.json();
     if (!phone) return NextResponse.json({ error: "Phone number required" }, { status: 400 });
 
-    // 1. SECURITY: STRICT ADMIN CHECK
-    // We check the whitelist BEFORE even generating or sending an OTP
-    const { data: admin, error: adminErr } = await supabase
-      .from("admin_users")
-      .select("phone, is_active")
-      .eq("phone", phone)
-      .eq("is_active", true)
+    // Normalize phone number (strip non-digits and strip 91 country code if present to get 10-digit number)
+    const digitsOnly = phone.replace(/\D/g, "");
+    const cleanPhone = digitsOnly.length === 12 && digitsOnly.startsWith("91") 
+      ? digitsOnly.substring(2) 
+      : digitsOnly;
+
+    if (cleanPhone.length !== 10) {
+      return NextResponse.json({ error: "Enter a valid 10-digit phone number" }, { status: 400 });
+    }
+
+    // 1. Check if host exists in hosts table
+    const { data: host, error: hostErr } = await supabase
+      .from("hosts")
+      .select("phone, verified, full_name")
+      .eq("phone", cleanPhone)
       .single();
 
-    if (adminErr || !admin) {
-      console.warn(`Blocked OTP request for non-admin: ${phone}`);
-      return NextResponse.json({ error: "Unauthorized access" }, { status: 403 });
+    if (hostErr || !host) {
+      console.warn(`Blocked OTP request for non-host: ${cleanPhone}`);
+      return NextResponse.json({ error: "Access Denied: Not a registered host" }, { status: 403 });
     }
 
     // Cooldown check: Limit OTP generation to once every 60 seconds per phone number
     const { data: lastOtp } = await supabase
       .from("otp_events")
       .select("created_at")
-      .eq("phone", phone)
+      .eq("phone", cleanPhone)
       .order("created_at", { ascending: false })
       .limit(1);
 
@@ -58,19 +66,20 @@ export async function POST(req: Request) {
       }
     }
 
-    // 2. Generate and Store OTP
+    // 2. Generate and Store OTP (stored under cleanPhone)
     const otp = generateOTP();
     const otpHash = hashOTP(otp);
     const expiresAt = new Date(Date.now() + 2 * 60 * 1000).toISOString();
 
     await supabase.from("otp_events").insert({
-      phone,
+      phone: cleanPhone,
       otp_hash: otpHash,
       expires_at: expiresAt,
     });
 
-    // 3. Send via WhatsApp
-    const sent = await sendWhatsAppOTP(phone, otp);
+    // 3. Send via WhatsApp (prepending 91 for international format)
+    const whatsappDestination = `91${cleanPhone}`;
+    const sent = await sendWhatsAppOTP(whatsappDestination, otp);
 
     if (!sent) {
       return NextResponse.json({ error: "Message provider error" }, { status: 500 });
@@ -78,7 +87,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, message: "Secure OTP sent" });
   } catch (err) {
-    console.error("Secure admin OTP error:", err);
+    console.error("Host OTP error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

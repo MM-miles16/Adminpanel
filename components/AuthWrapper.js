@@ -10,6 +10,9 @@ export default function AuthWrapper({ children }) {
   const [adminData, setAdminData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Login type state: 'hub' or 'host'
+  const [loginType, setLoginType] = useState("hub");
+
   // Login state
   const [loginStep, setLoginStep] = useState(1);
   const [phone, setPhone] = useState("");
@@ -17,23 +20,28 @@ export default function AuthWrapper({ children }) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
-    const token = sessionStorage.getItem("admin_token");
-    const storedAdmin = sessionStorage.getItem("admin_info");
-
-    if (token && storedAdmin) {
+    const checkSession = async () => {
       try {
-        const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
-        if (payload.exp > Math.floor(Date.now() / 1000)) {
-          setIsAdmin(true);
-          setAdminData(JSON.parse(storedAdmin));
+        const res = await fetch("/api/hub/session");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated && data.user) {
+            setIsAdmin(true);
+            setAdminData(data.user);
+            sessionStorage.setItem("admin_info", JSON.stringify(data.user));
+          } else {
+            sessionStorage.clear();
+          }
         } else {
           sessionStorage.clear();
         }
-      } catch {
+      } catch (e) {
         sessionStorage.clear();
+      } finally {
+        setLoading(false);
       }
-    }
-    setLoading(false);
+    };
+    checkSession();
   }, []);
 
   const handleCheckAdmin = async () => {
@@ -45,7 +53,8 @@ export default function AuthWrapper({ children }) {
     const cleanPhone = phone.startsWith("91") ? phone : `91${phone}`;
 
     try {
-      const res = await fetch("/api/hub/auth/send-otp", {
+      const url = loginType === "host" ? "/api/hub/auth/send-otp-host" : "/api/hub/auth/send-otp";
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: cleanPhone }),
@@ -71,7 +80,8 @@ export default function AuthWrapper({ children }) {
     const cleanPhone = phone.startsWith("91") ? phone : `91${phone}`;
 
     try {
-      const res = await fetch("/api/hub/admin-verify", {
+      const url = loginType === "host" ? "/api/hub/host-verify" : "/api/hub/admin-verify";
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: cleanPhone, otp: entered }),
@@ -79,11 +89,10 @@ export default function AuthWrapper({ children }) {
       const data = await res.json();
 
       if (res.ok) {
-        sessionStorage.setItem("admin_token", data.token);
         sessionStorage.setItem("admin_info", JSON.stringify(data.admin));
         setAdminData(data.admin);
         setIsAdmin(true);
-        toast.success(`Welcome, ${data.admin.name || "Admin"}`);
+        toast.success(`Welcome, ${data.admin.name || "User"}`);
       } else {
         toast.error(data.error || "Invalid OTP");
       }
@@ -124,11 +133,27 @@ export default function AuthWrapper({ children }) {
             <Image src="/mlogo.png" alt="MM Miles" width={140} height={42} />
           </div>
           <h1 className="portal-title">HUB OPS</h1>
-          <p className="portal-subtitle">Secure Admin Access Only</p>
+          <p className="portal-subtitle">Secure access for fleet operations</p>
+
+          <div className="login-tabs">
+            <button 
+              className={`login-tab ${loginType === 'hub' ? 'active' : ''}`}
+              onClick={() => { setLoginType('hub'); setPhone(""); setOtp(["","","",""]); setLoginStep(1); }}
+            >
+              Admin
+            </button>
+            <button 
+              className={`login-tab ${loginType === 'host' ? 'active' : ''}`}
+              onClick={() => { setLoginType('host'); setPhone(""); setOtp(["","","",""]); setLoginStep(1); }}
+            >
+              Host
+            </button>
+          </div>
+
           {loginStep === 1 ? (
             <div>
               <div className="portal-form-group">
-                <label className="portal-label">Admin Phone Number</label>
+                <label className="portal-label">{loginType === 'host' ? 'Host' : 'Admin'} Phone Number</label>
                 <div style={{ position: "relative" }}>
                   <span className="phone-prefix">+91</span>
                   <input
@@ -191,11 +216,11 @@ export default function AuthWrapper({ children }) {
               borderRadius: '10px',
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
-              background: adminData?.role === 'operator' ? '#e8f4fd' : '#fef3e2',
-              color: adminData?.role === 'operator' ? '#1976d2' : '#c6a76e',
-              border: adminData?.role === 'operator' ? '1px solid #bbdefb' : '1px solid #f5deb3',
+              background: adminData?.role === 'operator' ? '#e8f4fd' : (adminData?.role === 'host' ? '#e8f5e9' : '#fef3e2'),
+              color: adminData?.role === 'operator' ? '#1976d2' : (adminData?.role === 'host' ? '#2e7d32' : '#c6a76e'),
+              border: adminData?.role === 'operator' ? '1px solid #bbdefb' : (adminData?.role === 'host' ? '1px solid #c8e6c9' : '1px solid #f5deb3'),
             }}>
-              {adminData?.role === 'operator' ? 'Operator' : 'Admin'}
+              {adminData?.role === 'operator' ? 'Operator' : (adminData?.role === 'host' ? 'Host' : 'Admin')}
             </span>
           </span>
         </div>

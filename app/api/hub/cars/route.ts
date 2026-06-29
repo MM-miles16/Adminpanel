@@ -1,19 +1,25 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { verifyToken } from '../../../../lib/auth';
+import { getUserFromRequest } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
 
 export async function GET(request) {
   try {
+    const user = getUserFromRequest(request);
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     // Try to use service role for admin operations, fallback to anon
     const supabaseKey = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Fetch vehicles and join with hosts table
-    const { data: vehicles, error } = await supabase
+    let query = supabase
       .from('vehicles')
       .select(`
         id,
@@ -34,8 +40,14 @@ export async function GET(request) {
           image_url,
           is_primary
         )
-      `)
-      .order('created_at', { ascending: false });
+      `);
+
+    // If host is logged in, filter vehicles to only show their own
+    if (user.role === 'host') {
+      query = query.eq('host_id', user.sub);
+    }
+
+    const { data: vehicles, error } = await query.order('created_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching cars:', error);
@@ -55,17 +67,10 @@ export async function GET(request) {
 
 export async function PATCH(request) {
   try {
-    // RBAC: Only admins can block/unblock cars
-    const authHeader = request.headers.get('authorization');
-    const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
-    const user = verifyToken(token);
+    const user = getUserFromRequest(request);
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    if (user.admin_role === 'operator') {
-      return NextResponse.json({ error: 'Operators cannot modify car status' }, { status: 403 });
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -76,6 +81,22 @@ export async function PATCH(request) {
 
     if (!vehicleId) {
       return NextResponse.json({ error: 'Vehicle ID is required' }, { status: 400 });
+    }
+
+    // Role verification
+    if (user.role === 'host') {
+      // Host can only modify their own vehicles
+      const { data: vehicle, error: vError } = await supabase
+        .from('vehicles')
+        .select('id, host_id')
+        .eq('id', vehicleId)
+        .single();
+      
+      if (vError || !vehicle || vehicle.host_id !== user.sub) {
+        return NextResponse.json({ error: 'Unauthorized: You do not own this vehicle' }, { status: 403 });
+      }
+    } else if (user.admin_role === 'operator') {
+      return NextResponse.json({ error: 'Operators cannot modify car status' }, { status: 403 });
     }
 
     const { data, error } = await supabase

@@ -1,7 +1,7 @@
 // app/api/hub/bookings/route.ts
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { getUserFromAuthHeader } from "@/lib/auth";
+import { getUserFromRequest } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
 
@@ -17,8 +17,6 @@ const supabase = createClient(
  * Example: "2026-04-14T09:00" → "2026-04-14T09:00:00.000Z"
  */
 function toFaceValueISO(localDateTimeStr: string): string {
-  // datetime-local gives "YYYY-MM-DDTHH:MM"
-  // We construct a UTC date with the same face-value components
   const [datePart, timePart] = localDateTimeStr.split("T");
   const [year, month, day] = datePart.split("-").map(Number);
   const [hour, minute] = timePart.split(":").map(Number);
@@ -29,10 +27,9 @@ function toFaceValueISO(localDateTimeStr: string): string {
 
 export async function GET(req: Request) {
   try {
-    const authHeader = req.headers.get("authorization");
-    const admin = getUserFromAuthHeader(authHeader);
+    const admin = getUserFromRequest(req);
 
-    if (!admin || admin.role !== "hub_admin") {
+    if (!admin || (admin.role !== "hub_admin" && admin.role !== "host")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -43,7 +40,26 @@ export async function GET(req: Request) {
     const from = (page - 1) * limit;
     const to = from + limit - 1;
 
-    const { data: logs, error, count } = await supabase
+    let vehicleIds: number[] = [];
+    if (admin.role === "host") {
+      const { data: vehicles } = await supabase
+        .from('vehicles')
+        .select('id')
+        .eq('host_id', admin.sub);
+      vehicleIds = vehicles?.map(v => v.id) || [];
+
+      if (vehicleIds.length === 0) {
+        return NextResponse.json({ 
+          bookings: [],
+          total: 0,
+          page,
+          limit,
+          hasMore: false
+        });
+      }
+    }
+
+    let query = supabase
       .from("maintenance_logs")
       .select(`
         id,
@@ -53,7 +69,13 @@ export async function GET(req: Request) {
         created_at,
         vehicles (make, model, registration_number)
       `, { count: "exact" })
-      .eq("reason", reason)
+      .eq("reason", reason);
+
+    if (admin.role === "host") {
+      query = query.in("vehicle_id", vehicleIds);
+    }
+
+    const { data: logs, error, count } = await query
       .order("created_at", { ascending: false })
       .range(from, to);
 
@@ -74,10 +96,9 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const authHeader = req.headers.get("authorization");
-    const admin = getUserFromAuthHeader(authHeader);
+    const admin = getUserFromRequest(req);
 
-    if (!admin || admin.role !== "hub_admin") {
+    if (!admin || (admin.role !== "hub_admin" && admin.role !== "host")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -85,6 +106,18 @@ export async function POST(req: Request) {
 
     if (!vehicle_id || !start_time || !end_time) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+    }
+
+    // Host can only book their own vehicles
+    if (admin.role === "host") {
+      const { data: vehicle, error: vError } = await supabase
+        .from('vehicles')
+        .select('id, host_id')
+        .eq('id', vehicle_id)
+        .single();
+      if (vError || !vehicle || vehicle.host_id !== admin.sub) {
+        return NextResponse.json({ error: "Unauthorized: You do not own this vehicle" }, { status: 403 });
+      }
     }
 
     const isoStart = toFaceValueISO(start_time);
@@ -111,8 +144,6 @@ export async function POST(req: Request) {
 
     if (overlapErr) {
       console.error("Overlap check error:", overlapErr);
-      // Fallback: manual overlap check for both tables
-      // Use booking_range for bookings to account for existing buffers
       const { data: bookingOverlaps } = await supabase
         .from("bookings")
         .select("id")
@@ -120,7 +151,6 @@ export async function POST(req: Request) {
         .eq("status", "confirmed")
         .filter('booking_range', 'ov', `[${isoStart},${isoEndWithBuffer})`);
 
-      // For maintenance, check if our buffered range overlaps with their simple range
       const { data: maintenanceOverlaps } = await supabase
         .from("maintenance_logs")
         .select("id")
@@ -162,10 +192,9 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const authHeader = req.headers.get("authorization");
-    const admin = getUserFromAuthHeader(authHeader);
+    const admin = getUserFromRequest(req);
 
-    if (!admin || admin.role !== "hub_admin") {
+    if (!admin || (admin.role !== "hub_admin" && admin.role !== "host")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -175,6 +204,19 @@ export async function DELETE(req: Request) {
 
     if (!id) {
       return NextResponse.json({ error: "ID required" }, { status: 400 });
+    }
+
+    // Host can only delete logs for their own vehicles
+    if (admin.role === "host") {
+      const { data: log, error: logErr } = await supabase
+        .from('maintenance_logs')
+        .select('id, vehicle_id, vehicles (host_id)')
+        .eq('id', id)
+        .single();
+      
+      if (logErr || !log || (log.vehicles as any)?.host_id !== admin.sub) {
+        return NextResponse.json({ error: "Unauthorized: You do not own this vehicle" }, { status: 403 });
+      }
     }
 
     const { error } = await supabase

@@ -1,4 +1,4 @@
-// app/api/hub/admin-verify/route.ts
+// app/api/hub/host-verify/route.ts
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
@@ -21,11 +21,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Phone and OTP required" }, { status: 400 });
     }
 
+    // Normalize phone number (strip non-digits and strip 91 country code if present to get 10-digit number)
+    const digitsOnly = phone.replace(/\D/g, "");
+    const cleanPhone = digitsOnly.length === 12 && digitsOnly.startsWith("91") 
+      ? digitsOnly.substring(2) 
+      : digitsOnly;
+
     // 1. Verify OTP from otp_events
     const { data: records, error: otpErr } = await supabase
       .from("otp_events")
       .select("*")
-      .eq("phone", phone)
+      .eq("phone", cleanPhone)
       .order("created_at", { ascending: false })
       .limit(1);
 
@@ -68,34 +74,27 @@ export async function POST(req: Request) {
     // Mark consumed
     await supabase.from("otp_events").update({ consumed: true }).eq("id", record.id);
 
-    // 2. Re-verify admin status
-    const { data: admin, error: adminErr } = await supabase
-      .from("admin_users")
-      .select("id, name, user_id, role")
-      .eq("phone", phone)
-      .eq("is_active", true)
+    // 2. Query host status
+    const { data: host, error: hostErr } = await supabase
+      .from("hosts")
+      .select("id, full_name, phone, email, verified")
+      .eq("phone", cleanPhone)
       .single();
 
-    if (adminErr || !admin) {
-      return NextResponse.json({ error: "Unauthorized access" }, { status: 403 });
+    if (hostErr || !host) {
+      return NextResponse.json({ error: "Access Denied: Not a registered host" }, { status: 403 });
     }
 
-    // 3. Update last login
-    await supabase
-      .from("admin_users")
-      .update({ last_login: new Date().toISOString() })
-      .eq("id", admin.id);
-
-    // 4. Create Admin JWT
+    // 3. Create Host JWT
     const now = Math.floor(Date.now() / 1000);
     const token = jwt.sign(
       {
         aud: "authenticated",
-        role: "hub_admin",
-        admin_role: admin.role || "admin",
-        sub: admin.user_id || admin.id,
-        name: admin.name,
-        phone: phone,
+        role: "host", // Host role
+        sub: host.id, // Host ID as subject
+        name: host.full_name,
+        phone: host.phone,
+        email: host.email,
         iat: now,
         exp: now + 8 * 60 * 60, // 8 hours session
       },
@@ -109,12 +108,13 @@ export async function POST(req: Request) {
 
     const response = NextResponse.json({
       success: true,
-      token, // Keep token in body for client backward compatibility
+      token, // Return token for backward compatibility
       admin: {
-        id: admin.id,
-        name: admin.name,
-        role: admin.role || "admin",
-        phone: phone
+        id: host.id,
+        name: host.full_name,
+        role: "host",
+        phone: host.phone,
+        email: host.email
       }
     });
 
@@ -129,7 +129,7 @@ export async function POST(req: Request) {
 
     return response;
   } catch (err) {
-    console.error("Admin verify error:", err);
+    console.error("Host verify error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

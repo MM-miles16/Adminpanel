@@ -2,12 +2,15 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import { useRole } from '../lib/RoleContext'
 
 export default function Sidebar() {
   const path = usePathname()
   const [open, setOpen] = useState(false)
+  const { isHost } = useRole()
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch("/api/hub/logout", { method: "POST" }).catch(() => {});
     sessionStorage.clear()
     window.location.reload()
   }
@@ -48,7 +51,11 @@ export default function Sidebar() {
 
             <Link href="/maintainance" className={`item ${path==='/maintainance'?'active':''}`} onClick={()=>setOpen(false)}>Maintainace</Link>
 
-            <Link href="/offline-booking" className={`item ${path==='/offline-booking'?'active':''}`} onClick={()=>setOpen(false)}>Offline Booking</Link>
+            {!isHost && (
+              <Link href="/offline-booking" className={`item ${path==='/offline-booking'?'active':''}`} onClick={()=>setOpen(false)}>Offline Booking</Link>
+            )}
+
+            <Link href="/profile" className={`item ${path==='/profile'?'active':''}`} onClick={()=>setOpen(false)}>Profile</Link>
 
           </div>
         </div>
