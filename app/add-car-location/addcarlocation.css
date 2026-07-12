@@ -1,0 +1,1025 @@
+/* =========================================================
+   ADDING CAR PAGE - PART 1
+   Base Layout, Form, Inputs & Button
+========================================================= */
+
+
+
+
+.adding-car-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #F5F1E9;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  border-radius: 22px;
+  padding: 0px;
+}
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.adding-car-card {
+
+  width: 100%;
+  max-width: 1580px;
+
+  background: #fff;
+
+  border-radius: 22px;
+
+  padding: 45px 75px;
+
+  border: 1px solid #ececec;
+
+  box-shadow:
+      0 10px 30px rgba(0,0,0,.05),
+      0 2px 8px rgba(0,0,0,.04);
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.adding-car-header {
+
+  text-align: center;
+
+  margin-bottom: 45px;
+}
+
+.adding-car-title {
+
+  margin: 0;
+
+  font-size: 32px;
+
+  font-weight: 700;
+
+  color: #111;
+
+  line-height: 1.2;
+
+  letter-spacing: -.5px;
+}
+
+.adding-car-subtitle {
+
+  margin-top: 14px;
+
+  font-size: 16px;
+
+  font-weight: 500;
+
+  color: #8B8B8B;
+
+  line-height: 1.6;
+}
+
+/* =====================================================
+   FORM GRID
+===================================================== */
+
+.adding-car-form {
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  column-gap: 70px;
+
+  row-gap: 28px;
+}
+
+/* =====================================================
+   FIELD
+===================================================== */
+
+.adding-car-field {
+
+  display: flex;
+
+  flex-direction: column;
+}
+
+.adding-car-label {
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #6A6A6A;
+
+  margin-bottom: 4px;
+}
+
+/* =====================================================
+   INPUT
+===================================================== */
+
+.adding-car-input {
+
+  width: 100%;
+  max-width: 490px;
+
+  height: 60px;
+
+  padding: 0 22px;
+
+  border-radius: 12px;
+
+  border: 2px solid #E3E3E3;
+
+  background: #fff;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #6e6e6e;
+
+  transition: .25s ease;
+}
+
+.adding-car-input::placeholder {
+
+  color: #6e6e6e;
+}
+
+.adding-car-input:hover {
+
+  border-color: #D2D2D2;
+}
+
+.adding-car-input:focus {
+
+  outline: none;
+
+  border-color: #C6A76E;
+
+  box-shadow: 0 0 0 5px rgba(198,167,110,.14);
+}
+
+/* =====================================================
+   SELECT
+===================================================== */
+
+.adding-car-select {
+
+  width: 100%;
+
+  height: 60px;
+
+  padding: 0 22px;
+
+  border-radius: 16px;
+
+  border: 2px solid #E3E3E3;
+
+  background: #fff;
+
+  color: #6e6e6e;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  appearance: none;
+
+  cursor: pointer;
+
+  transition: .25s ease;
+
+  background-image:
+      linear-gradient(45deg, transparent 50%, #888 50%),
+      linear-gradient(135deg, #888 50%, transparent 50%);
+
+  background-position:
+      calc(100% - 22px) 25px,
+      calc(100% - 16px) 25px;
+
+  background-size: 7px 7px;
+
+  background-repeat: no-repeat;
+}
+
+.adding-car-select:hover {
+
+  border-color: #D2D2D2;
+}
+
+.adding-car-select:focus {
+
+  outline: none;
+
+  border-color: #C6A76E;
+
+  box-shadow: 0 0 0 5px rgba(198,167,110,.14);
+}
+
+/* =====================================================
+   BUTTON SECTION
+===================================================== */
+
+.adding-car-bottom {
+
+  grid-column: 1 / -1;
+
+  display: flex;
+
+  justify-content: center;
+
+  margin-top: 25px;
+}
+
+/* =====================================================
+   SAVE BUTTON
+===================================================== */
+
+.adding-car-btn {
+
+  min-width:230px;
+
+  height: 48px;
+
+  border: none;
+
+  border-radius: 40px;
+
+  background: #EFEFEF;
+
+  color: #2D2D2D;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  letter-spacing: .3px;
+
+  cursor: pointer;
+
+  transition: all .25s ease;
+
+  box-shadow:
+      0 6px 15px rgba(83, 80, 80, 0.08),
+      inset 0 3px 0 rgba(206, 170, 94, 0.8);
+}
+
+.adding-car-btn:hover {
+
+  background: #C6A76E;
+
+  color: #111;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+      0 12px 22px rgba(198,167,110,.25);
+}
+
+.adding-car-btn:active {
+
+  transform: scale(.98);
+}
+
+.adding-car-btn:disabled {
+
+  background: #DDDDDD;
+
+  color: #888;
+
+  cursor: not-allowed;
+
+  box-shadow: none;
+
+  transform: none;
+}
+
+/* =====================================================
+   ERROR TEXT
+===================================================== */
+
+.adding-car-error {
+
+  margin-top: 8px;
+
+  color: #D62828;
+
+  font-size: 14px;
+
+  font-weight: 500;
+}
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   ADDING CAR PAGE - PART 2
+   Responsive, Animation & Utility Styles
+========================================================= */
+
+/* =====================================================
+   INPUT & SELECT TRANSITIONS
+===================================================== */
+
+.adding-car-input,
+.adding-car-select,
+.adding-car-btn{
+    transition: all .25s ease;
+}
+
+/* Remove default outline */
+
+.adding-car-input:focus-visible,
+.adding-car-select:focus-visible{
+    outline:none;
+}
+
+/* Autofill Fix */
+
+.adding-car-input:-webkit-autofill{
+    -webkit-box-shadow:0 0 0 1000px #fff inset;
+    -webkit-text-fill-color:#111;
+}
+
+/* =====================================================
+   FIELD ANIMATION
+===================================================== */
+
+.adding-car-field{
+    animation: addingCarFade .4s ease both;
+}
+
+.adding-car-field:nth-child(1){animation-delay:.05s;}
+.adding-car-field:nth-child(2){animation-delay:.08s;}
+.adding-car-field:nth-child(3){animation-delay:.11s;}
+.adding-car-field:nth-child(4){animation-delay:.14s;}
+.adding-car-field:nth-child(5){animation-delay:.17s;}
+.adding-car-field:nth-child(6){animation-delay:.20s;}
+.adding-car-field:nth-child(7){animation-delay:.23s;}
+.adding-car-field:nth-child(8){animation-delay:.26s;}
+
+@keyframes addingCarFade{
+
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+/* =====================================================
+   BUTTON ANIMATION
+===================================================== */
+
+.adding-car-btn{
+
+    position:relative;
+    overflow:hidden;
+
+}
+
+.adding-car-btn::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:-120%;
+
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.45),
+        transparent
+    );
+
+    transition:.65s;
+
+}
+
+.adding-car-btn:hover::before{
+
+    left:120%;
+
+}
+
+/* =====================================================
+   LARGE DESKTOP
+===================================================== */
+
+@media (min-width:1700px){
+
+.adding-car-card{
+
+    max-width:1680px;
+
+    padding:70px 110px;
+
+}
+
+.adding-car-title{
+
+    font-size:48px;
+
+}
+
+.adding-car-subtitle{
+
+    font-size:25px;
+
+}
+
+.adding-car-form{
+
+    column-gap:90px;
+    row-gap:40px;
+
+}
+
+.adding-car-label{
+
+    font-size:20px;
+
+}
+
+.adding-car-input,
+.adding-car-select{
+
+    height:66px;
+
+    font-size:19px;
+
+}
+
+.adding-car-btn{
+
+    width:380px;
+    height:62px;
+
+    font-size:20px;
+
+}
+
+}
+
+/* =====================================================
+   LAPTOP
+===================================================== */
+
+@media (max-width:1400px){
+
+.adding-car-card{
+
+    padding:50px;
+
+}
+
+.adding-car-title{
+
+    font-size:28px;
+
+}
+
+.adding-car-subtitle{
+
+    font-size:14px;
+    margin-top: 8px;
+
+}
+
+.adding-car-form{
+
+    column-gap:50px;
+
+}
+
+.adding-car-btn {
+
+  min-width: 230px;
+
+  height: 38px;
+
+  border: none;
+
+  border-radius: 30px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  
+}
+
+.adding-car-header {
+
+  text-align: center;
+
+  margin-bottom: 45px;
+  margin-top: -10px;
+}
+
+
+
+/* =====================================================
+   FORM GRID
+===================================================== */
+
+.adding-car-form {
+
+  row-gap: 24px;
+}
+
+/* =====================================================
+   FIELD
+===================================================== */
+
+
+
+.adding-car-label {
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  color: #6A6A6A;
+
+  margin-bottom: 2px;
+}
+
+/* =====================================================
+   INPUT
+===================================================== */
+
+.adding-car-input {
+
+  width: 100%;
+  max-width: 365px !important;
+  height: 40px;
+
+  padding: 0 22px;
+
+  border-radius: 12px;
+
+  border: 2px solid #E3E3E3;
+
+  background: #fff;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  transition: .25s ease;
+}
+
+
+
+.adding-car-input:hover {
+
+  border-color: #D2D2D2;
+}
+
+.adding-car-input:focus {
+
+  outline: none;
+
+  border-color: #C6A76E;
+
+  box-shadow: 0 0 0 5px rgba(198,167,110,.14);
+}
+
+/* =====================================================
+   SELECT
+===================================================== */
+
+.adding-car-select {
+
+  width: 100%;
+
+  height: 40px;
+
+  padding: 0 22px;
+
+  border-radius: 12px;
+
+  border: 2px solid #E3E3E3;
+
+  background: #fff;
+
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  appearance: none;
+
+  cursor: pointer;
+
+  transition: .25s ease;
+
+  background-image:
+      linear-gradient(45deg, transparent 50%, #888 50%),
+      linear-gradient(135deg, #888 50%, transparent 50%);
+
+  background-position:
+      calc(100% - 22px) 15px,
+      calc(100% - 16px) 15px;
+
+  background-size: 6px 6px;
+
+  background-repeat: no-repeat;
+}
+
+.adding-car-btn:hover {
+
+  background: #C6A76E;
+
+  color: #111;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+      0 12px 22px rgba(198,167,110,.25);
+}
+
+.adding-car-btn:active {
+
+  transform: scale(.99);
+}
+
+
+
+}
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width:1024px){
+
+.adding-car-page{
+
+    padding:30px 18px;
+
+}
+
+.adding-car-card{
+
+    padding:40px 35px;
+
+}
+
+.adding-car-title{
+
+    font-size:34px;
+
+}
+
+.adding-car-subtitle{
+
+    font-size:18px;
+
+}
+
+.adding-car-form{
+
+    grid-template-columns:1fr;
+
+    row-gap:22px;
+
+}
+
+.adding-car-bottom{
+
+    margin-top:10px;
+
+}
+
+.adding-car-btn{
+
+    width:100%;
+
+    max-width:420px;
+
+}
+
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width:768px){
+
+.adding-car-page{
+
+    padding:0px !important;
+
+}
+
+.adding-car-card{
+
+    border-radius:18px;
+
+    padding:30px 19px !important;
+
+}
+
+.adding-car-header{
+
+    margin-bottom:30px;
+    margin-top:30px;
+
+}
+
+.adding-car-title{
+
+    font-size:18px !important;
+
+    line-height:1.35;
+
+}
+
+.adding-car-subtitle{
+
+    font-size:13px !important;
+
+    line-height:1.4;
+
+    margin-top:10px;
+
+}
+
+.adding-car-form{
+
+    grid-template-columns:1fr;
+
+    gap:16px;
+
+}
+
+.adding-car-label{
+
+    font-size:11px !important;
+
+    margin-bottom:4px !important;
+
+}
+
+
+.adding-car-select{
+
+    height:39px !important;
+    width: 100%;
+  max-width: 339px !important;
+
+    border-radius:14px;
+
+    font-size:15px;
+
+    padding:3px 16px;
+
+}
+.adding-car-input{
+
+    height:39px !important;
+    width: 100%;
+  max-width: 305px !important;
+
+    border-radius:14px;
+
+    font-size:15px;
+
+    padding:0 16px;
+
+}
+
+.adding-car-bottom{
+
+    margin-top:15px;
+
+}
+
+.adding-car-btn{
+
+    width:220px;
+    max-width: 100%;
+
+    
+
+    height:34px !important;
+
+    font-size:13px !important;
+
+}
+
+}
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width:480px){
+
+.adding-car-page{
+
+    padding:12px;
+
+}
+
+.adding-car-card{
+
+    padding:22px 15px;
+
+}
+
+.adding-car-title{
+
+    font-size:24px;
+
+}
+
+.adding-car-subtitle{
+
+    font-size:14px;
+
+}
+
+.adding-car-label{
+
+    font-size:14px;
+
+}
+
+.adding-car-input,
+.adding-car-select{
+
+    height:50px;
+
+    font-size:10px;
+
+}
+
+
+.adding-car-select{
+    width: 100%;
+  max-width: 322px !important;
+
+}
+
+.adding-car-input{
+    width: 100%;
+    max-width: 285px !important;
+}
+
+.adding-car-btn{
+
+    height:50px;
+
+    font-size:15px;
+
+}
+
+}
+
+/* =====================================================
+   REDUCE MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce){
+
+.adding-car-field,
+.adding-car-btn,
+.adding-car-input,
+.adding-car-select{
+
+    animation:none !important;
+    transition:none !important;
+
+}
+
+}
+
+/* =====================================================
+   PRINT
+===================================================== */
+
+@media print{
+
+.adding-car-page{
+
+    background:#fff;
+
+}
+
+.adding-car-card{
+
+    box-shadow:none;
+
+    border:1px solid #ddd;
+
+}
+
+.adding-car-btn{
+
+    display:none;
+
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.adding-car-description{
+
+width:100%;
+
+border:2px solid #e3e3e3;
+
+border-radius:18px;
+
+padding:14px;
+
+font-size:12px;
+
+resize:none;
+
+font-family:Poppins,sans-serif;
+
+transition:.3s;
+
+}
+
+.adding-car-description:focus{
+
+outline:none;
+
+border-color:#C6A76E;
+
+box-shadow:0 0 0 5px rgba(198,167,110,.15);
+
+}
+
+.adding-car-counter{
+
+margin-top:10px;
+
+text-align:right;
+
+font-size:9px;
+
+font-weight:600;
+
+color:#888;
+
+}
+
