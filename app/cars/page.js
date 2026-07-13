@@ -29,8 +29,6 @@ export default function Cars() {
 
     setIsSubmitting(true);
     try {
-      const token = sessionStorage.getItem("admin_token");
-      
       const formatLocal = (date) => {
         const pad = (n) => n.toString().padStart(2, '0');
         return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
@@ -40,7 +38,6 @@ export default function Cars() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           vehicle_id: selectedCar.id,
@@ -70,12 +67,10 @@ export default function Cars() {
 
     setIsSubmitting(true);
     try {
-      const token = sessionStorage.getItem("admin_token");
       const res = await fetch("/api/hub/cars", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           vehicleId: selectedCar.id,
@@ -101,12 +96,7 @@ export default function Cars() {
   const fetchCars = async (isManual = false) => {
     if (isManual) setIsRefreshing(true);
     try {
-      const token = sessionStorage.getItem("admin_token");
-      const res = await fetch(`/api/hub/cars?t=${Date.now()}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const res = await fetch(`/api/hub/cars?t=${Date.now()}`);
       if (res.ok) {
         const json = await res.json();
         if (json.success && json.data) {

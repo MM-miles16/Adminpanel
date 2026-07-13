@@ -608,7 +608,7 @@ button {
     gap: 12px;
   }
 
-  #mobile-number-Maintenance {
+  .mobile-number-Maintenance {
   display: none;
 }
 

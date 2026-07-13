@@ -79,6 +79,7 @@ export default function Profile() {
           <label>Account ID</label>
           <h3>#{userInfo.id || "N/A"}</h3>
         </div>
+
         <div className="profile-box">
           <label>Aadhar Number</label>
           <h3>4244-3455-8905</h3>
