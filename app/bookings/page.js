@@ -23,10 +23,7 @@ export default function Bookings() {
   const fetchBookings = async (isManual = false, targetPage = 1) => {
     if (isManual) setIsRefreshing(true);
     try {
-      const token = sessionStorage.getItem("admin_token");
-      const res = await fetch(`/api/hub/bookings/list?page=${targetPage}&limit=10&t=${Date.now()}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await fetch(`/api/hub/bookings/list?page=${targetPage}&limit=10&t=${Date.now()}`);
       if (res.ok) {
         const json = await res.json();
         if (json.success && json.data) {

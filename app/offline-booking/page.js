@@ -28,10 +28,7 @@ export default function OfflineBooking() {
   const fetchLogs = async (isManual = false, targetPage = 1) => {
     if (isManual) setIsRefreshing(true);
     try {
-      const token = sessionStorage.getItem("admin_token");
-      const res = await fetch(`/api/hub/bookings?reason=OFFLINE BOOKING&page=${targetPage}&limit=10&t=${Date.now()}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(`/api/hub/bookings?reason=OFFLINE BOOKING&page=${targetPage}&limit=10&t=${Date.now()}`);
       if (res.ok) {
         const json = await res.json();
         const now = new Date();
@@ -97,8 +94,6 @@ export default function OfflineBooking() {
 
     setIsSubmitting(true);
     try {
-      const token = sessionStorage.getItem("admin_token");
-      
       // Format to YYYY-MM-DDTHH:MM for the API's toFaceValueISO
       const formatLocal = (date) => {
         const pad = (n) => n.toString().padStart(2, '0');
@@ -109,7 +104,6 @@ export default function OfflineBooking() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           vehicle_id: selectedVehicleId,
@@ -155,10 +149,8 @@ export default function OfflineBooking() {
   const handleDelete = async () => {
     if (!selectedCar) return;
     try {
-      const token = sessionStorage.getItem("admin_token");
       const res = await fetch(`/api/hub/bookings?id=${selectedCar.id}&reason=OFFLINE BOOKING`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         setLogs(prev => prev.filter(item => item.id !== selectedCar.id));

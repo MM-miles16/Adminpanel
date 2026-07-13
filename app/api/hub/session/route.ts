@@ -26,7 +26,7 @@ export async function GET(request: Request) {
       user: {
         id: decoded.sub,
         name: decoded.name,
-        role: decoded.role || "admin",
+        role: decoded.admin_role || decoded.role || "admin",
         phone: decoded.phone,
         email: decoded.email
       }

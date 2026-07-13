@@ -28,10 +28,7 @@ export default function Home() {
   const fetchStats = async (isManual = false) => {
     if (isManual) setIsRefreshing(true);
     try {
-      const token = sessionStorage.getItem("admin_token");
-      const res = await fetch('/api/hub/dashboard/stats', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await fetch('/api/hub/dashboard/stats');
       if (res.ok) {
         const json = await res.json();
         if (json.success) {
@@ -211,8 +208,7 @@ export default function Home() {
 
             <div className="tabs">
               <span 
-                id="mobile-number-Maintenance"
-                className={bookingsTab === "This Week" ? "active" : ""}
+                className={`mobile-number-Maintenance ${bookingsTab === "This Week" ? "active" : ""}`}
                 onClick={() => setBookingsTab("This Week")}
                 style={{ cursor: "pointer" }}
               >This Week</span>
@@ -230,7 +226,7 @@ export default function Home() {
           <div className="split-top">CARS UNDER MAINTENANCE</div>
           <div className="split-bottom">
             <h2>{isLoading ? '...' : occupancyStats.cars_in_maintenance_now}</h2>
-            <p>Cars <span id="mobile-number-Maintenance">in Maintenance</span></p>
+            <p>Cars <span className="mobile-number-Maintenance">in Maintenance</span></p>
             <button onClick={() => onNavigate('maintainance')}>Know More</button>
           </div>
         </div>
@@ -252,8 +248,8 @@ export default function Home() {
         {/* HOST REQUEST */}
         {isAdmin && (
         <div className="host-card">
-          <h3>Hosh Request</h3>
-          <p>Know more<span id="mobile-number-Maintenance"> about Host</span>  Requests</p>
+          <h3>Host Request</h3>
+          <p>Know more<span className="mobile-number-Maintenance"> about Host</span>  Requests</p>
           <button>Click to View</button>
         </div>
         )}

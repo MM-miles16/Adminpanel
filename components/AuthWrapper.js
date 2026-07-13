@@ -30,13 +30,13 @@ export default function AuthWrapper({ children }) {
             setAdminData(data.user);
             sessionStorage.setItem("admin_info", JSON.stringify(data.user));
           } else {
-            sessionStorage.clear();
+            sessionStorage.removeItem("admin_info");
           }
         } else {
-          sessionStorage.clear();
+          sessionStorage.removeItem("admin_info");
         }
       } catch (e) {
-        sessionStorage.clear();
+        sessionStorage.removeItem("admin_info");
       } finally {
         setLoading(false);
       }
