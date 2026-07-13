@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useRole } from "../lib/RoleContext";
+import Link from "next/link";
 
 export default function Home() {
   const router = useRouter();
@@ -240,7 +241,9 @@ export default function Home() {
           <div className="add-right">
             <h3>ADD CARS</h3>
             <p>Add when you have all data about Car and Host</p>
-            <button>Add now</button>
+            <Link href="/add-car">
+              <button type="button">Add Now</button>
+            </Link>
           </div>
         </div>
         )}
