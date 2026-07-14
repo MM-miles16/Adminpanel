@@ -77,13 +77,19 @@ export default function Profile() {
 
         <div className="profile-box">
           <label>Account ID</label>
-          <h3>#{userInfo.id || "N/A"}</h3>
+          <h3>
+            {role === "host"
+              ? `MMMILES${userInfo.id ? String(userInfo.id).padStart(2, "0") : "N/A"}`
+              : `#${userInfo.id || "N/A"}`}
+          </h3>
         </div>
 
-        <div className="profile-box">
-          <label>Aadhar Number</label>
-          <h3>4244-3455-8905</h3>
-        </div>
+        {role !== "host" && (
+          <div className="profile-box">
+            <label>Aadhar Number</label>
+            <h3>4244-3455-8905</h3>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function Home() {
   const router = useRouter();
-  const { isAdmin } = useRole();
+  const { isAdmin, isHost } = useRole();
   const [revenueStats, setRevenueStats] = useState({
     last_day_revenue: 0,
     last_week_revenue: 0,
@@ -233,7 +233,7 @@ export default function Home() {
         </div>
 
         {/* ✅ ADD CARS */}
-        {isAdmin && (
+        {(isAdmin || isHost) && (
         <div className="add-card">
           <div className="add-left">
             <img src="/add-car.png" className="add-img" />
@@ -254,6 +254,15 @@ export default function Home() {
           <h3>Host Request</h3>
           <p>Know more<span className="mobile-number-Maintenance"> about Host</span>  Requests</p>
           <button>Click to View</button>
+        </div>
+        )}
+
+        {/* GET SUPPORT */}
+        {isHost && (
+        <div className="host-card">
+          <h3>Get Support</h3>
+          <p>Need help?<span className="mobile-number-Maintenance"> Contact Admin</span> for support</p>
+          <button>Contact Us</button>
         </div>
         )}
 
