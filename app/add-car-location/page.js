@@ -1,11 +1,10 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import "./addcarlocation.css";
 
 export default function AddCarLocation() {
-
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -15,59 +14,71 @@ export default function AddCarLocation() {
     city: "",
     district: "",
     state: "",
-    pincode: ""
+    pincode: "",
+    baseDailyRate: "2000"
   });
 
+  useEffect(() => {
+    const saved = sessionStorage.getItem("add_car_step3");
+    if (saved) {
+      try {
+        setFormData(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse saved step 3 data:", e);
+      }
+    }
+  }, []);
+
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    console.log(formData);
-
-    // Next Step
+    if (!formData.city.trim()) {
+      alert("Please enter the city.");
+      return;
+    }
+    sessionStorage.setItem("add_car_step3", JSON.stringify(formData));
     router.push("/add-car-images");
   };
 
   return (
     <div className="adding-car-page">
-
       <div className="adding-car-card">
-
         {/* Header */}
-
         <div className="adding-car-header">
-
           <h1 className="adding-car-title">
-            Tell Us Where Your Car Is Located
+            Location & Base Daily Rate
           </h1>
-
           <p className="adding-car-subtitle">
-            These car address will be shown to users when they book your car.
+            Provide the car location address and daily rental pricing.
           </p>
-
         </div>
 
         {/* Form */}
-
-        <form
-          className="adding-car-form"
-          onSubmit={handleSubmit}
-        >
-
-          {/* Left */}
-
+        <form className="adding-car-form" onSubmit={handleSubmit}>
+          {/* Base Daily Rate */}
           <div className="adding-car-field">
+            <label className="adding-car-label">Base Daily Rate (₹)</label>
+            <input
+              type="number"
+              name="baseDailyRate"
+              placeholder="Ex: 2500"
+              value={formData.baseDailyRate}
+              onChange={handleChange}
+              className="adding-car-input"
+              required
+            />
+          </div>
 
-            <label className="adding-car-label">
-              Flat or Door No
-            </label>
-
+          {/* Door No */}
+          <div className="adding-car-field">
+            <label className="adding-car-label">Flat or Door No</label>
             <input
               type="text"
               name="doorNo"
@@ -76,17 +87,11 @@ export default function AddCarLocation() {
               onChange={handleChange}
               className="adding-car-input"
             />
-
           </div>
 
-          {/* Right */}
-
+          {/* Street */}
           <div className="adding-car-field">
-
-            <label className="adding-car-label">
-              Enter Street
-            </label>
-
+            <label className="adding-car-label">Enter Street</label>
             <input
               type="text"
               name="street"
@@ -95,55 +100,38 @@ export default function AddCarLocation() {
               onChange={handleChange}
               className="adding-car-input"
             />
-
           </div>
 
-          {/* Left */}
-
+          {/* Area */}
           <div className="adding-car-field">
-
-            <label className="adding-car-label">
-              Enter Area Name
-            </label>
-
+            <label className="adding-car-label">Enter Area Name</label>
             <input
               type="text"
               name="area"
-              placeholder="Enter Area"
+              placeholder="Enter Area / Hub Name"
               value={formData.area}
               onChange={handleChange}
               className="adding-car-input"
             />
-
           </div>
 
-          {/* Right */}
-
+          {/* City */}
           <div className="adding-car-field">
-
-            <label className="adding-car-label">
-              Enter City
-            </label>
-
+            <label className="adding-car-label">Enter City</label>
             <input
               type="text"
               name="city"
-              placeholder="Enter City"
+              placeholder="Ex: Bengaluru, Chennai"
               value={formData.city}
               onChange={handleChange}
               className="adding-car-input"
+              required
             />
-
           </div>
 
-          {/* Left */}
-
+          {/* District */}
           <div className="adding-car-field">
-
-            <label className="adding-car-label">
-              Enter District
-            </label>
-
+            <label className="adding-car-label">Enter District</label>
             <input
               type="text"
               name="district"
@@ -152,17 +140,11 @@ export default function AddCarLocation() {
               onChange={handleChange}
               className="adding-car-input"
             />
-
           </div>
 
-          {/* Right */}
-
+          {/* State */}
           <div className="adding-car-field">
-
-            <label className="adding-car-label">
-              Enter State
-            </label>
-
+            <label className="adding-car-label">Enter State</label>
             <input
               type="text"
               name="state"
@@ -171,49 +153,29 @@ export default function AddCarLocation() {
               onChange={handleChange}
               className="adding-car-input"
             />
-
           </div>
 
-          {/* Left */}
-
+          {/* Pincode */}
           <div className="adding-car-field">
-
-            <label className="adding-car-label">
-              Enter Pincode
-            </label>
-
+            <label className="adding-car-label">Enter Pincode</label>
             <input
-              type="number"
+              type="text"
               name="pincode"
               placeholder="Enter Pincode"
               value={formData.pincode}
               onChange={handleChange}
               className="adding-car-input"
             />
-
           </div>
-
-          {/* Empty Grid Item */}
-
-          <div></div>
 
           {/* Button */}
-
           <div className="adding-car-bottom">
-
-            <button
-              type="submit"
-              className="adding-car-btn"
-            >
+            <button type="submit" className="adding-car-btn">
               SAVE AND CONTINUE
             </button>
-
           </div>
-
         </form>
-
       </div>
-
     </div>
   );
 }
