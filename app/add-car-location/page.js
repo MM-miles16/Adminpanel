@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import "./addcarlocation.css";
+import "../add-car-flow.css";
 
 export default function AddCarLocation() {
   const router = useRouter();
@@ -14,9 +15,9 @@ export default function AddCarLocation() {
     city: "",
     district: "",
     state: "",
-    pincode: "",
-    baseDailyRate: "2000"
+    pincode: ""
   });
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
     const saved = sessionStorage.getItem("add_car_step3");
@@ -39,10 +40,15 @@ export default function AddCarLocation() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.city.trim()) {
-      alert("Please enter the city.");
+    if (!formData.area.trim() || !formData.city.trim() || !formData.pincode.trim()) {
+      setFormError("Enter the area, city, and pincode so we can place the vehicle accurately.");
       return;
     }
+    if (!/^\d{6}$/.test(formData.pincode.trim())) {
+      setFormError("Enter a valid 6-digit pincode.");
+      return;
+    }
+    setFormError("");
     sessionStorage.setItem("add_car_step3", JSON.stringify(formData));
     router.push("/add-car-images");
   };
@@ -50,32 +56,20 @@ export default function AddCarLocation() {
   return (
     <div className="adding-car-page">
       <div className="adding-car-card">
+        <div className="adding-car-progress" aria-label="Step 3 of 4"><span className="complete">1</span><i className="complete"></i><span className="complete">2</span><i className="complete"></i><span className="active">3</span><i></i><span>4</span><b>Location</b></div>
         {/* Header */}
         <div className="adding-car-header">
           <h1 className="adding-car-title">
-            Location & Base Daily Rate
+            Location Details
           </h1>
           <p className="adding-car-subtitle">
-            Provide the car location address and daily rental pricing.
+            Use the full pickup address. It is used to place this car correctly, even when several cars are in the same city.
           </p>
         </div>
 
         {/* Form */}
         <form className="adding-car-form" onSubmit={handleSubmit}>
-          {/* Base Daily Rate */}
-          <div className="adding-car-field">
-            <label className="adding-car-label">Base Daily Rate (₹)</label>
-            <input
-              type="number"
-              name="baseDailyRate"
-              placeholder="Ex: 2500"
-              value={formData.baseDailyRate}
-              onChange={handleChange}
-              className="adding-car-input"
-              required
-            />
-          </div>
-
+          {formError && <div className="adding-car-alert" role="alert">{formError}</div>}
           {/* Door No */}
           <div className="adding-car-field">
             <label className="adding-car-label">Flat or Door No</label>
@@ -86,6 +80,7 @@ export default function AddCarLocation() {
               value={formData.doorNo}
               onChange={handleChange}
               className="adding-car-input"
+              autoComplete="address-line1"
             />
           </div>
 
@@ -99,6 +94,7 @@ export default function AddCarLocation() {
               value={formData.street}
               onChange={handleChange}
               className="adding-car-input"
+              autoComplete="address-line2"
             />
           </div>
 
@@ -112,6 +108,7 @@ export default function AddCarLocation() {
               value={formData.area}
               onChange={handleChange}
               className="adding-car-input"
+              autoComplete="address-level2"
             />
           </div>
 
@@ -126,6 +123,7 @@ export default function AddCarLocation() {
               onChange={handleChange}
               className="adding-car-input"
               required
+              autoComplete="address-level1"
             />
           </div>
 
@@ -139,6 +137,7 @@ export default function AddCarLocation() {
               value={formData.district}
               onChange={handleChange}
               className="adding-car-input"
+              autoComplete="address-level1"
             />
           </div>
 
@@ -152,6 +151,7 @@ export default function AddCarLocation() {
               value={formData.state}
               onChange={handleChange}
               className="adding-car-input"
+              autoComplete="address-level1"
             />
           </div>
 
@@ -165,11 +165,16 @@ export default function AddCarLocation() {
               value={formData.pincode}
               onChange={handleChange}
               className="adding-car-input"
+              inputMode="numeric"
+              maxLength="6"
+              pattern="[0-9]{6}"
+              autoComplete="postal-code"
             />
           </div>
 
           {/* Button */}
           <div className="adding-car-bottom">
+            <button className="adding-car-back" type="button" onClick={() => router.back()}>Back</button>
             <button type="submit" className="adding-car-btn">
               SAVE AND CONTINUE
             </button>

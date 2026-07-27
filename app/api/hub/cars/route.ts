@@ -85,16 +85,7 @@ export async function PATCH(request) {
 
     // Role verification
     if (user.role === 'host') {
-      // Host can only modify their own vehicles
-      const { data: vehicle, error: vError } = await supabase
-        .from('vehicles')
-        .select('id, host_id')
-        .eq('id', vehicleId)
-        .single();
-      
-      if (vError || !vehicle || vehicle.host_id !== user.sub) {
-        return NextResponse.json({ error: 'Unauthorized: You do not own this vehicle' }, { status: 403 });
-      }
+      return NextResponse.json({ error: 'Only admins can change car availability' }, { status: 403 });
     } else if (user.admin_role === 'operator') {
       return NextResponse.json({ error: 'Operators cannot modify car status' }, { status: 403 });
     }

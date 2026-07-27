@@ -95,7 +95,7 @@ export default function Home() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }} id="refresh-button-mobile-ui">
-        <h1 className="title" style={{ margin: 0 }}>Welcome <span className="mobile-admin-word-remove">Admin</span> </h1>
+        <h1 className="title" style={{ margin: 0 }}>Welcome <span className="mobile-admin-word-remove">{isHost ? "Host" : "Admin"}</span></h1>
         <button 
           
           onClick={() => fetchStats(true)} 

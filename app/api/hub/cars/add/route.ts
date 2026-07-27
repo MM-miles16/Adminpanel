@@ -4,22 +4,69 @@ import { getUserFromRequest } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
+const CITY_COORDINATES: Record<string, { latitude: number; longitude: number }> = {
+  bangalore: { latitude: 12.9716, longitude: 77.5946 },
+  bengaluru: { latitude: 12.9716, longitude: 77.5946 },
+  chennai: { latitude: 13.0827, longitude: 80.2707 },
+  coimbatore: { latitude: 11.0168, longitude: 76.9558 },
+};
+
+function getCityCoordinates(city: string) {
+  return CITY_COORDINATES[city.trim().toLowerCase()] || CITY_COORDINATES.bengaluru;
+}
+
+function buildAddress(parts: Array<string | null | undefined>) {
+  return parts
+    .map((part) => (part || '').toString().trim())
+    .filter(Boolean)
+    .join(', ');
+}
+
+async function geocodeAddress(address: string) {
+  const apiKey = process.env.GOOGLE_MAPS_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  if (!apiKey || !address) return null;
+
+  try {
+    const url = new URL('https://maps.googleapis.com/maps/api/geocode/json');
+    url.searchParams.set('address', address);
+    url.searchParams.set('key', apiKey);
+    url.searchParams.set('region', 'in');
+
+    const response = await fetch(url.toString());
+    if (!response.ok) {
+      console.error('Google geocoding request failed:', response.status);
+      return null;
+    }
+
+    const data = await response.json();
+    const location = data.results?.[0]?.geometry?.location;
+    if (!location || typeof location.lat !== 'number' || typeof location.lng !== 'number') {
+      console.error('Google geocoding returned no location for submitted address');
+      return null;
+    }
+
+    return {
+      latitude: location.lat,
+      longitude: location.lng,
+    };
+  } catch (error: any) {
+    console.error('Google geocoding error:', error.message);
+    return null;
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const user = getUserFromRequest(request);
 
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized: Host session required' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Strictly enforce host session
-    if (user.role !== 'host') {
-      return NextResponse.json({ error: 'Access Denied: This feature is only for host sessions' }, { status: 403 });
-    }
-
-    const hostId = Number(user.sub);
-    if (!hostId || isNaN(hostId)) {
-      return NextResponse.json({ error: 'Invalid host ID in session' }, { status: 400 });
+    const isHost = user.role === 'host';
+    const isAdmin = user.admin_role === 'admin';
+    if (!isHost && !isAdmin) {
+      return NextResponse.json({ error: 'Only hosts and admins can add vehicles' }, { status: 403 });
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -31,18 +78,22 @@ export async function POST(request: Request) {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Verify host exists in hosts table
+    const formData = await request.formData();
+    const hostId = isHost ? Number(user.sub) : Number(formData.get('host_id'));
+    if (!hostId || isNaN(hostId)) {
+      return NextResponse.json({ error: isAdmin ? 'Select a valid host for this vehicle' : 'Invalid host ID in session' }, { status: 400 });
+    }
+
+    // Verify the target host exists before creating a vehicle for it.
     const { data: hostRecord, error: hostErr } = await supabase
       .from('hosts')
-      .select('id, full_name, phone')
+      .select('id, full_name, phone, verified')
       .eq('id', hostId)
       .single();
 
-    if (hostErr || !hostRecord) {
+    if (hostErr || !hostRecord || !hostRecord.verified) {
       return NextResponse.json({ error: `Registered host not found for ID ${hostId}` }, { status: 404 });
     }
-
-    const formData = await request.formData();
 
     // 1. Extract Vehicle Specifications from FormData
     const make = (formData.get('make') || formData.get('carBrand') || '').toString().trim();
@@ -60,14 +111,58 @@ export async function POST(request: Request) {
     const mileageStr = (formData.get('mileage_kmpl') || formData.get('mileage') || '15').toString().trim();
     const mileage_kmpl = parseFloat(mileageStr) || 15;
     const description = (formData.get('description') || '').toString().trim();
+    const baseDailyRateRaw = (formData.get('base_daily_rate') || '').toString().trim();
+    const base_daily_rate = baseDailyRateRaw ? Number(baseDailyRateRaw) : null;
 
+    const door_no = (formData.get('door_no') || formData.get('doorNo') || '').toString().trim();
+    const street = (formData.get('street') || '').toString().trim();
+    const area = (formData.get('area') || '').toString().trim();
     const city = (formData.get('city') || 'Bengaluru').toString().trim();
-    const location_name = (formData.get('location_name') || formData.get('area') || formData.get('street') || 'Hub Location').toString().trim();
-    const baseDailyRateStr = (formData.get('base_daily_rate') || formData.get('pricePerDay') || '2000').toString().trim();
-    const base_daily_rate = parseFloat(baseDailyRateStr) || 2000;
+    const district = (formData.get('district') || '').toString().trim();
+    const state = (formData.get('state') || '').toString().trim();
+    const pincode = (formData.get('pincode') || '').toString().trim();
+    const fullAddress = buildAddress([door_no, street, area, city, district, state, pincode]);
+    const location_name = (formData.get('location_name') || fullAddress || 'Hub Location').toString().trim();
+    const submittedLatitude = parseFloat((formData.get('latitude') || '').toString());
+    const submittedLongitude = parseFloat((formData.get('longitude') || '').toString());
+    const geocodedCoordinates = Number.isFinite(submittedLatitude) && Number.isFinite(submittedLongitude)
+      ? null
+      : await geocodeAddress(location_name);
+    const fallbackCoordinates = getCityCoordinates(city);
+    const latitude = Number.isFinite(submittedLatitude) ? submittedLatitude : geocodedCoordinates?.latitude ?? fallbackCoordinates.latitude;
+    const longitude = Number.isFinite(submittedLongitude) ? submittedLongitude : geocodedCoordinates?.longitude ?? fallbackCoordinates.longitude;
 
     if (!make || !model || !registration_number) {
       return NextResponse.json({ error: 'Make, model, and registration number are required' }, { status: 400 });
+    }
+
+    if (isAdmin && (base_daily_rate === null || !Number.isFinite(base_daily_rate) || base_daily_rate <= 0)) {
+      return NextResponse.json({ error: 'Admins must provide a valid base daily price' }, { status: 400 });
+    }
+
+    const mainImage = formData.get('main') || formData.get('mainImage');
+    if (!(mainImage instanceof File) || mainImage.size === 0) {
+      return NextResponse.json({ error: 'A main cover image is required before a vehicle can be submitted' }, { status: 400 });
+    }
+
+    if (!mainImage.type.startsWith('image/') || mainImage.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: 'The main cover image must be an image file no larger than 10 MB' }, { status: 400 });
+    }
+
+    const { data: duplicateVehicle, error: duplicateLookupError } = await supabase
+      .from('vehicles')
+      .select('id')
+      .eq('registration_number', registration_number)
+      .limit(1)
+      .maybeSingle();
+
+    if (duplicateLookupError) {
+      console.error('Could not check duplicate registration:', duplicateLookupError);
+      return NextResponse.json({ error: 'Unable to validate the registration number. Please try again.' }, { status: 500 });
+    }
+
+    if (duplicateVehicle) {
+      return NextResponse.json({ error: 'A vehicle with this registration number has already been added' }, { status: 409 });
     }
 
     // 2. Compute Host Code (e.g. HOST04) and Next Sequence Number
@@ -116,14 +211,16 @@ export async function POST(request: Request) {
           registration_number,
           city,
           location_name,
+          latitude,
+          longitude,
           vehicle_type,
           fuel_type,
           transmission_type,
           seating_capacity,
           mileage_kmpl,
           description,
-          base_daily_rate,
-          available_status: true,
+          base_daily_rate: isAdmin ? base_daily_rate : null,
+          available_status: false,
         },
       ])
       .select()
@@ -139,6 +236,8 @@ export async function POST(request: Request) {
     // 4. Upload Image Files to Supabase Storage Bucket ('car-images')
     const imageKeys = ['main', 'front', 'side', 'interior', 'rear'];
     const uploadedImages = [];
+    const uploadedFilenames: string[] = [];
+    let mainUploadFailed = false;
 
     const imageFieldsMap: Record<string, string[]> = {
       main: ['main', 'mainImage'],
@@ -183,7 +282,9 @@ export async function POST(request: Request) {
 
         if (uploadErr) {
           console.error(`Failed to upload ${filename} to car-images bucket:`, uploadErr);
+          if (typeKey === 'main') mainUploadFailed = true;
         } else {
+          uploadedFilenames.push(filename);
           const isPrimary = typeKey === 'main' || (!hasPrimary && typeKey === 'front');
           if (isPrimary) hasPrimary = true;
 
@@ -202,11 +303,22 @@ export async function POST(request: Request) {
 
           if (imgDbErr) {
             console.error(`Failed to insert vehicle_image row for ${filename}:`, imgDbErr);
+            if (typeKey === 'main') mainUploadFailed = true;
           } else {
             uploadedImages.push(imgRow);
           }
         }
       }
+
+      if (mainUploadFailed) break;
+    }
+
+    if (mainUploadFailed) {
+      if (uploadedFilenames.length > 0) {
+        await supabase.storage.from('car-images').remove(uploadedFilenames);
+      }
+      await supabase.from('vehicles').delete().eq('id', vehicleId);
+      return NextResponse.json({ error: 'We could not save the required cover photo. No vehicle was created; please try again.' }, { status: 500 });
     }
 
     return NextResponse.json({
