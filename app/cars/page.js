@@ -382,14 +382,16 @@ export default function Cars() {
               {selectedCar.plate}
             </div>
             <div className="popup-actions">
-              <div 
-                className="popup-item" 
-                onClick={() => setShowStatusConfirm(true)}
-                style={{ opacity: isSubmitting ? 0.5 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-              >
-                <img src="/block.png" style={{ filter: selectedCar.status === 'live' ? 'none' : 'hue-rotate(90deg)' }} />
-                <span>{selectedCar.status === 'live' ? 'BLOCK' : 'GO LIVE'}</span>
-              </div>
+              {isAdmin && (
+                <div 
+                  className="popup-item" 
+                  onClick={() => setShowStatusConfirm(true)}
+                  style={{ opacity: isSubmitting ? 0.5 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                >
+                  <img src="/block.png" style={{ filter: selectedCar.status === 'live' ? 'none' : 'hue-rotate(90deg)' }} />
+                  <span>{selectedCar.status === 'live' ? 'BLOCK' : 'GO LIVE'}</span>
+                </div>
+              )}
               <div className="popup-item" onClick={() => setActionType("maintain")}>
                 <img src="/maintain.png" />
                 <span>MAINTENANCE</span>
