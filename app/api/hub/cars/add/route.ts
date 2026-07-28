@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getUserFromRequest } from '@/lib/auth';
+import { sendVehicleAddedTelegramNotification } from '@/lib/telegram';
 
 export const dynamic = 'force-dynamic';
 
@@ -319,6 +320,17 @@ export async function POST(request: Request) {
       }
       await supabase.from('vehicles').delete().eq('id', vehicleId);
       return NextResponse.json({ error: 'We could not save the required cover photo. No vehicle was created; please try again.' }, { status: 500 });
+    }
+
+    if (isHost) {
+      await sendVehicleAddedTelegramNotification({
+        vehicleCode: vehicle_code,
+        make,
+        model,
+        registrationNumber: registration_number,
+        hostName: hostRecord.full_name,
+        hostPhone: hostRecord.phone,
+      });
     }
 
     return NextResponse.json({

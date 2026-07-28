@@ -10,8 +10,8 @@ export default function AuthWrapper({ children }) {
   const [adminData, setAdminData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Login type state: 'hub' or 'host'
-  const [loginType, setLoginType] = useState("hub");
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [availableRoles, setAvailableRoles] = useState([]);
 
   // Login state
   const [loginStep, setLoginStep] = useState(1);
@@ -44,24 +44,26 @@ export default function AuthWrapper({ children }) {
     checkSession();
   }, []);
 
-  const handleCheckAdmin = async () => {
-    if (!phone || phone.length < 10) {
+  const handleRequestOtp = async (role = selectedRole) => {
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length !== 10 && !(digits.length === 12 && digits.startsWith("91"))) {
       toast.error("Enter a valid 10-digit phone number");
       return;
     }
     setIsLoggingIn(true);
-    const cleanPhone = phone.startsWith("91") ? phone : `91${phone}`;
 
     try {
-      const url = loginType === "host" ? "/api/hub/auth/send-otp-host" : "/api/hub/auth/send-otp";
-      const res = await fetch(url, {
+      const res = await fetch("/api/hub/auth/request-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: cleanPhone }),
+        body: JSON.stringify({ phone: digits, role }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
-      if (res.ok) {
+      if (data.requiresRoleChoice) {
+        setAvailableRoles(data.roles || []);
+      } else if (res.ok) {
+        setSelectedRole(data.role);
         setLoginStep(2);
         toast.success("OTP sent to WhatsApp");
       } else {
@@ -77,14 +79,11 @@ export default function AuthWrapper({ children }) {
   const handleVerifyOtp = async (entered = otp.join("")) => {
     if (entered.length < 4) return;
     setIsLoggingIn(true);
-    const cleanPhone = phone.startsWith("91") ? phone : `91${phone}`;
-
     try {
-      const url = loginType === "host" ? "/api/hub/host-verify" : "/api/hub/admin-verify";
-      const res = await fetch(url, {
+      const res = await fetch("/api/hub/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: cleanPhone, otp: entered }),
+        body: JSON.stringify({ phone, otp: entered, role: selectedRole }),
       });
       const data = await res.json();
 
@@ -135,25 +134,10 @@ export default function AuthWrapper({ children }) {
           <h1 className="portal-title">HUB OPS</h1>
           <p className="portal-subtitle">Secure access for fleet operations</p>
 
-          <div className="login-tabs">
-            <button 
-              className={`login-tab ${loginType === 'hub' ? 'active' : ''}`}
-              onClick={() => { setLoginType('hub'); setPhone(""); setOtp(["","","",""]); setLoginStep(1); }}
-            >
-              Admin
-            </button>
-            <button 
-              className={`login-tab ${loginType === 'host' ? 'active' : ''}`}
-              onClick={() => { setLoginType('host'); setPhone(""); setOtp(["","","",""]); setLoginStep(1); }}
-            >
-              Host
-            </button>
-          </div>
-
           {loginStep === 1 ? (
             <div>
               <div className="portal-form-group">
-                <label className="portal-label">{loginType === 'host' ? 'Host' : 'Admin'} Phone Number</label>
+                <label className="portal-label">Phone Number</label>
                 <div style={{ position: "relative" }}>
                   <span className="phone-prefix">+91</span>
                   <input
@@ -164,17 +148,23 @@ export default function AuthWrapper({ children }) {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                     onKeyDown={(e) => e.key === "Enter" && handleCheckAdmin()}
-                    maxLength={10}
+                    maxLength={12}
                   />
                 </div>
               </div>
-              <button className="portal-btn" onClick={handleCheckAdmin} disabled={isLoggingIn}>
+              {availableRoles.length > 1 && (
+                <div className="login-tabs" aria-label="Choose portal">
+                  <button className={`login-tab ${selectedRole === 'admin' ? 'active' : ''}`} onClick={() => { setSelectedRole('admin'); handleRequestOtp('admin'); }} disabled={isLoggingIn}>Admin Portal</button>
+                  <button className={`login-tab ${selectedRole === 'host' ? 'active' : ''}`} onClick={() => { setSelectedRole('host'); handleRequestOtp('host'); }} disabled={isLoggingIn}>Host Portal</button>
+                </div>
+              )}
+              <button className="portal-btn" onClick={() => handleRequestOtp()} disabled={isLoggingIn || availableRoles.length > 1}>
                 {isLoggingIn ? "Verifying..." : "Send Verification Code"}
               </button>
             </div>
           ) : (
             <div>
-              <p className="otp-sent-text">OTP sent to <strong>+91 {phone}</strong></p>
+              <p className="otp-sent-text">OTP sent to <strong>+91 {phone.replace(/^91/, "")}</strong></p>
               <div className="otp-display-group">
                 {otp.map((digit, i) => (
                   <input
@@ -191,7 +181,7 @@ export default function AuthWrapper({ children }) {
               <button className="portal-btn" onClick={() => handleVerifyOtp()} disabled={isLoggingIn}>
                 {isLoggingIn ? "Verifying..." : "Access Portal"}
               </button>
-              <p className="go-back-link" onClick={() => { setLoginStep(1); setOtp(["","","",""]); }}>← Go Back</p>
+              <p className="go-back-link" onClick={() => { setLoginStep(1); setOtp(["","","",""]); setSelectedRole(null); setAvailableRoles([]); }}>← Go Back</p>
             </div>
           )}
           <div className="secured-badge">
